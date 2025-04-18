@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    
+    <!-- Content Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Content</h5>
+                    <h2 class="card-text">{{ total_content }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Published Content</h5>
+                    <h2 class="card-text">{{ published_content }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Draft Content</h5>
+                    <h2 class="card-text">{{ draft_content }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Most Viewed Content -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Most Viewed Content</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for content in most_viewed %}
+                        <a href="{{ content.get_absolute_url }}" class="list-group-item list-group-item-action">
+                            {{ content.title }}
+                            <span class="badge bg-primary float-end">{{ content.views_count }} views</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Downloaded Content -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Most Downloaded Content</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for content in most_downloaded %}
+                        <a href="{{ content.get_absolute_url }}" class="list-group-item list-group-item-action">
+                            {{ content.title }}
+                            <span class="badge bg-success float-end">{{ content.downloads_count }} downloads</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Content -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Content</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for content in recent_content %}
+                        <a href="{{ content.get_absolute_url }}" class="list-group-item list-group-item-action">
+                            {{ content.title }}
+                            <small class="text-muted float-end">{{ content.created_at|date:"M d, Y" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for category in categories %}
+                        <a href="{% url 'core:category_detail' category.slug %}" class="list-group-item list-group-item-action">
+                            {{ category.name }}
+                            <span class="badge bg-info float-end">{{ category.content_count }} items</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

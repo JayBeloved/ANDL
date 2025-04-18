@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ content.title }} - Apostle Niyi Digital Library{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <article class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <!-- Content Header -->
+        <header class="mb-8">
+            <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full mb-3">{{ content.get_content_type_display }}</span>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{{ content.title }}</h1>
+            <div class="text-gray-500 mb-4">
+                <span>By {{ content.author.get_full_name }}</span> |
+                <span>{{ content.publication_date|date:"F j, Y" }}</span> |
+                <span>Category: <a href="{% url 'core:category' content.category.slug %}" class="text-primary hover:underline">{{ content.category.name }}</a></span>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in content.tags.all %}
+                    <a href="{% url 'core:tag' tag.slug %}" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200 transition duration-300">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </header>
+
+        <!-- Content Body -->
+        <div class="prose max-w-none mb-8 text-gray-700">
+            {{ content.summary|linebreaks }}
+        </div>
+
+        <!-- External Links -->
+        <div class="mb-8">
+            {% if content.spotify_link or content.youtube_link or content.download_link %}
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">External Resources</h3>
+                <div class="space-y-2">
+                    {% if content.spotify_link %}
+                        <a href="{{ content.spotify_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-spotify text-green-500 text-xl mr-3"></i> Listen on Spotify
+                        </a>
+                    {% endif %}
+                    {% if content.youtube_link %}
+                        <a href="{{ content.youtube_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-youtube text-red-500 text-xl mr-3"></i> Watch on YouTube
+                        </a>
+                    {% endif %}
+                    {% if content.download_link %}
+                        <a href="{{ content.download_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+                            <i class="fas fa-download text-blue-500 text-xl mr-3"></i> Download Content
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Related Content -->
+        {% if related_contents %}
+            <section>
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Related Content</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {% for related in related_contents %}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 flex flex-col h-full">
+                            <div class="p-4 flex-grow">
+                                <span class="inline-block px-2 py-1 bg-primary text-white text-xs font-medium rounded-full mb-2">{{ related.get_content_type_display }}</span>
+                                <h4 class="text-lg font-semibold mb-2 text-gray-800">{{ related.title }}</h4>
+                                <p class="text-gray-600 text-sm mb-3">{{ related.summary|truncatewords:15 }}</p>
+                            </div>
+                            <div class="p-3 border-t border-gray-100">
+                                <a href="{% url 'core:content_detail' related.slug %}" class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition duration-300">Read More</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </article>
+</div>
+{% endblock content %}

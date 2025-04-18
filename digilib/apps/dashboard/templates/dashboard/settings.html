@@ -1,0 +1,146 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Settings | Dashboard{% endblock %}
+
+{% block header_title %}Settings{% endblock %}
+
+{% block content %}
+    <div class="space-y-8">
+        <!-- Site Settings -->
+        <div>
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Site Settings</h3>
+            
+            <form method="post" action="{% url 'dashboard:update_site_settings' %}" class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Site Title -->
+                    <div>
+                        <label for="id_site_title" class="block text-sm font-medium text-gray-700 mb-1">Site Title</label>
+                        <input type="text" name="site_title" id="id_site_title" value="{{ site_settings.site_title }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <!-- Site Description -->
+                    <div>
+                        <label for="id_site_description" class="block text-sm font-medium text-gray-700 mb-1">Site Description</label>
+                        <input type="text" name="site_description" id="id_site_description" value="{{ site_settings.site_description }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <!-- Contact Email -->
+                    <div>
+                        <label for="id_contact_email" class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                        <input type="email" name="contact_email" id="id_contact_email" value="{{ site_settings.contact_email }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <!-- Items Per Page -->
+                    <div>
+                        <label for="id_items_per_page" class="block text-sm font-medium text-gray-700 mb-1">Items Per Page</label>
+                        <input type="number" name="items_per_page" id="id_items_per_page" value="{{ site_settings.items_per_page }}" min="1" max="100" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition">
+                        Save Site Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Social Media Links -->
+        <div>
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Social Media Links</h3>
+            
+            <form method="post" action="{% url 'dashboard:update_social_links' %}" class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Facebook -->
+                    <div>
+                        <label for="id_facebook" class="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
+                                <i class="fab fa-facebook-f"></i>
+                            </span>
+                            <input type="url" name="facebook" id="id_facebook" value="{{ social_links.facebook }}" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    
+                    <!-- Twitter -->
+                    <div>
+                        <label for="id_twitter" class="block text-sm font-medium text-gray-700 mb-1">Twitter</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
+                                <i class="fab fa-twitter"></i>
+                            </span>
+                            <input type="url" name="twitter" id="id_twitter" value="{{ social_links.twitter }}" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    
+                    <!-- Instagram -->
+                    <div>
+                        <label for="id_instagram" class="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
+                                <i class="fab fa-instagram"></i>
+                            </span>
+                            <input type="url" name="instagram" id="id_instagram" value="{{ social_links.instagram }}" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    
+                    <!-- YouTube -->
+                    <div>
+                        <label for="id_youtube" class="block text-sm font-medium text-gray-700 mb-1">YouTube</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
+                                <i class="fab fa-youtube"></i>
+                            </span>
+                            <input type="url" name="youtube" id="id_youtube" value="{{ social_links.youtube }}" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition">
+                        Save Social Links
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Maintenance Mode -->
+        <div>
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Maintenance Mode</h3>
+            
+            <form method="post" action="{% url 'dashboard:toggle_maintenance_mode' %}" class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                {% csrf_token %}
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-800">Maintenance Mode</h4>
+                        <p class="text-sm text-gray-500 mt-1">When enabled, the site will display a maintenance message to visitors.</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <span class="mr-3 text-sm font-medium text-gray-700">{% if maintenance_mode %}Enabled{% else %}Disabled{% endif %}</span>
+                        <button type="submit" class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary {% if maintenance_mode %}bg-primary{% else %}bg-gray-200{% endif %}">
+                            <span class="sr-only">Toggle maintenance mode</span>
+                            <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 {% if maintenance_mode %}translate-x-5{% else %}translate-x-0{% endif %}"></span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label for="id_maintenance_message" class="block text-sm font-medium text-gray-700 mb-1">Maintenance Message</label>
+                    <textarea name="maintenance_message" id="id_maintenance_message" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">{{ maintenance_message }}</textarea>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition">
+                        Save Maintenance Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

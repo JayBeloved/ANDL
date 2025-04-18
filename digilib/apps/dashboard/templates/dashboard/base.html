@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard | Apostle Niyi Digital Library{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#4f46e5',
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Soft UI Dashboard Styles -->
+    <style>
+        /* Soft UI Dashboard Styles */
+        :root {
+            --soft-ui-bg: #f8f9fa;
+            --soft-ui-sidebar: #ffffff;
+            --soft-ui-primary: #cb0c9f;
+            --soft-ui-secondary: #8392ab;
+            --soft-ui-info: #17c1e8;
+            --soft-ui-success: #82d616;
+            --soft-ui-warning: #fbcf33;
+            --soft-ui-danger: #ea0606;
+            --soft-ui-dark: #344767;
+            --soft-ui-light: #e9ecef;
+        }
+        
+        body {
+            background-color: var(--soft-ui-bg);
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        .sidebar {
+            background-color: var(--soft-ui-sidebar);
+            box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+        }
+        
+        .nav-link {
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.675rem 1rem;
+        }
+        
+        .nav-link.active {
+            background-image: linear-gradient(310deg, var(--soft-ui-primary) 0%, #f38084 100%);
+            color: white;
+            box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.09), 0 2px 3px -1px rgba(0, 0, 0, 0.07);
+        }
+        
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-soft-primary {
+            background-color: rgba(203, 12, 159, 0.1);
+            color: var(--soft-ui-primary);
+        }
+        
+        .btn-soft-primary:hover {
+            background-color: var(--soft-ui-primary);
+            color: white;
+        }
+        
+        .btn-soft-info {
+            background-color: rgba(23, 193, 232, 0.1);
+            color: var(--soft-ui-info);
+        }
+        
+        .btn-soft-info:hover {
+            background-color: var(--soft-ui-info);
+            color: white;
+        }
+        
+        .btn-soft-success {
+            background-color: rgba(130, 214, 22, 0.1);
+            color: var(--soft-ui-success);
+        }
+        
+        .btn-soft-success:hover {
+            background-color: var(--soft-ui-success);
+            color: white;
+        }
+        
+        .btn-soft-warning {
+            background-color: rgba(251, 207, 51, 0.1);
+            color: var(--soft-ui-warning);
+        }
+        
+        .btn-soft-warning:hover {
+            background-color: var(--soft-ui-warning);
+            color: white;
+        }
+        
+        .btn-soft-danger {
+            background-color: rgba(234, 6, 6, 0.1);
+            color: var(--soft-ui-danger);
+        }
+        
+        .btn-soft-danger:hover {
+            background-color: var(--soft-ui-danger);
+            color: white;
+        }
+    </style>
+    
+    <!-- Custom CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 h-screen sticky top-0 p-4 hidden md:block">
+            <div class="flex items-center justify-center py-5">
+                <a href="{% url 'dashboard:index' %}" class="text-2xl font-bold text-gray-800">ANDL Admin</a>
+            </div>
+            
+            <hr class="my-4 border-gray-200">
+            
+            <nav class="mt-6">
+                <a href="{% url 'dashboard:index' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fas fa-home mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-file-alt mr-3"></i>
+                    <span>Content</span>
+                </a>
+                
+                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder mr-3"></i>
+                    <span>Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:tag_list' %}" class="nav-link flex items-center text-gray-700 {% if 'tag' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-tags mr-3"></i>
+                    <span>Tags</span>
+                </a>
+                
+                <a href="{% url 'dashboard:user_list' %}" class="nav-link flex items-center text-gray-700 {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-users mr-3"></i>
+                    <span>Users</span>
+                </a>
+                
+                <a href="{% url 'dashboard:settings' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <hr class="my-6 border-gray-200">
+            
+            <div class="mt-auto">
+                <a href="{% url 'core:home' %}" class="nav-link flex items-center text-gray-700">
+                    <i class="fas fa-globe mr-3"></i>
+                    <span>View Site</span>
+                </a>
+                
+                <a href="{% url 'accounts:logout' %}" class="nav-link flex items-center text-gray-700">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Mobile Sidebar Toggle -->
+        <div class="md:hidden fixed bottom-4 right-4 z-50">
+            <button id="sidebar-toggle" class="bg-primary text-white rounded-full p-3 shadow-lg">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Sidebar -->
+        <div id="mobile-sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+            <div class="flex items-center justify-between p-4 border-b">
+                <a href="{% url 'dashboard:index' %}" class="text-xl font-bold text-gray-800">ANDL Admin</a>
+                <button id="close-sidebar" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="mt-6 px-4">
+                <a href="{% url 'dashboard:index' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fas fa-home mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-file-alt mr-3"></i>
+                    <span>Content</span>
+                </a>
+                
+                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder mr-3"></i>
+                    <span>Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:tag_list' %}" class="nav-link flex items-center text-gray-700 {% if 'tag' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-tags mr-3"></i>
+                    <span>Tags</span>
+                </a>
+                
+                <a href="{% url 'dashboard:user_list' %}" class="nav-link flex items-center text-gray-700 {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-users mr-3"></i>
+                    <span>Users</span>
+                </a>
+                
+                <a href="{% url 'dashboard:settings' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Settings</span>
+                </a>
+                
+                <hr class="my-6 border-gray-200">
+                
+                <a href="{% url 'core:home' %}" class="nav-link flex items-center text-gray-700">
+                    <i class="fas fa-globe mr-3"></i>
+                    <span>View Site</span>
+                </a>
+                
+                <a href="{% url 'accounts:logout' %}" class="nav-link flex items-center text-gray-700">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">{% block header_title %}Dashboard{% endblock %}</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
+                            <img src="https://ui-avatars.com/api/?name={{ request.user.get_full_name|default:request.user.username }}&background=random" alt="User" class="h-8 w-8 rounded-full">
+                            <span class="text-gray-700 font-medium hidden md:block">{{ request.user.get_full_name|default:request.user.username }}</span>
+                            <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                        </button>
+                        
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+                            <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i> Profile
+                            </a>
+                            <a href="{% url 'accounts:password_change' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-key mr-2"></i> Change Password
+                            </a>
+                            <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="{% if message.tags == 'success' %}bg-green-100 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 border-yellow-500 text-yellow-700{% else %}bg-blue-100 border-blue-500 text-blue-700{% endif %} px-4 py-3 rounded-lg relative border-l-4 mb-3" role="alert">
+                    <span class="block sm:inline">{{ message }}</span>
+                    <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3 close-alert">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Content -->
+            <div class="card bg-white p-6 rounded-xl shadow-sm">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Mobile sidebar toggle
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.getElementById('mobile-sidebar').classList.remove('-translate-x-full');
+        });
+        
+        document.getElementById('close-sidebar').addEventListener('click', function() {
+            document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
+        });
+        
+        // User menu toggle
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+        
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('user-menu');
+            const userMenuButton = document.getElementById('user-menu-button');
+            
+            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+        
+        // Alert close buttons
+        document.querySelectorAll('.close-alert').forEach(function(button) {
+            button.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

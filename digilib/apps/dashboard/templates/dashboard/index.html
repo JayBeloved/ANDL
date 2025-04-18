@@ -1,0 +1,164 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Dashboard | Apostle Niyi Digital Library{% endblock %}
+
+{% block header_title %}Dashboard{% endblock %}
+
+{% block content %}
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Content -->
+        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-light opacity-80">Total Content</p>
+                    <h3 class="text-3xl font-bold">{{ content_count }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-30 rounded-full p-3">
+                    <i class="fas fa-file-alt text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-light">
+                <span class="{% if content_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                    <i class="fas {% if content_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                    {{ content_growth|floatformat:1 }}%
+                </span>
+                <span class="opacity-80 ml-1">since last month</span>
+            </div>
+        </div>
+        
+        <!-- Total Views -->
+        <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-light opacity-80">Total Views</p>
+                    <h3 class="text-3xl font-bold">{{ total_views }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-30 rounded-full p-3">
+                    <i class="fas fa-eye text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-light">
+                <span class="{% if views_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                    <i class="fas {% if views_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                    {{ views_growth|floatformat:1 }}%
+                </span>
+                <span class="opacity-80 ml-1">since last month</span>
+            </div>
+        </div>
+        
+        <!-- Total Downloads -->
+        <div class="bg-gradient-to-br from-green-500 to-teal-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-light opacity-80">Total Downloads</p>
+                    <h3 class="text-3xl font-bold">{{ total_downloads }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-30 rounded-full p-3">
+                    <i class="fas fa-download text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-light">
+                <span class="{% if downloads_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                    <i class="fas {% if downloads_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                    {{ downloads_growth|floatformat:1 }}%
+                </span>
+                <span class="opacity-80 ml-1">since last month</span>
+            </div>
+        </div>
+        
+        <!-- Total Users -->
+        <div class="bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-light opacity-80">Total Users</p>
+                    <h3 class="text-3xl font-bold">{{ user_count }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-30 rounded-full p-3">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-light">
+                <span class="{% if user_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                    <i class="fas {% if user_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                    {{ user_growth|floatformat:1 }}%
+                </span>
+                <span class="opacity-80 ml-1">since last month</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Content -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Recent Content</h3>
+                <a href="{% url 'dashboard:content_list' %}" class="text-sm text-primary hover:underline">View All</a>
+            </div>
+            
+            <div class="space-y-4">
+                {% for content in recent_content %}
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    {% if content.featured_image %}
+                    <img src="{{ content.featured_image.url }}" alt="{{ content.title }}" class="w-12 h-12 rounded-lg object-cover mr-4">
+                    {% else %}
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                        <i class="fas {% if content.content_type == 'SERMON' %}fa-microphone{% elif content.content_type == 'BOOK' %}fa-book{% else %}fa-file-alt{% endif %} text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-800">{{ content.title|truncatechars:40 }}</h4>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span class="mr-3">{{ content.get_content_type_display }}</span>
+                            <span>{{ content.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'dashboard:content_edit' content.id %}" class="text-gray-500 hover:text-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No content available.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Popular Content -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Popular Content</h3>
+                <a href="{% url 'dashboard:content_list' %}?sort=views" class="text-sm text-primary hover:underline">View All</a>
+            </div>
+            
+            <div class="space-y-4">
+                {% for content in popular_content %}
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    {% if content.featured_image %}
+                    <img src="{{ content.featured_image.url }}" alt="{{ content.title }}" class="w-12 h-12 rounded-lg object-cover mr-4">
+                    {% else %}
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                        <i class="fas {% if content.content_type == 'SERMON' %}fa-microphone{% elif content.content_type == 'BOOK' %}fa-book{% else %}fa-file-alt{% endif %} text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-800">{{ content.title|truncatechars:40 }}</h4>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span class="mr-3"><i class="far fa-eye mr-1"></i> {{ content.views_count }}</span>
+                            <span><i class="fas fa-download mr-1"></i> {{ content.downloads_count }}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'dashboard:content_edit' content.id %}" class="text-gray-500 hover:text-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No content available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

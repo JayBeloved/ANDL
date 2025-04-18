@@ -1,0 +1,237 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{% if form.instance.id %}Edit{% else %}Create{% endif %} Content | Dashboard{% endblock %}
+
+{% block header_title %}{% if form.instance.id %}Edit{% else %}Create{% endif %} Content{% endblock %}
+
+{% block extra_css %}
+<!-- CKEditor CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--multiple {
+        border-color: #e2e8f0;
+        border-radius: 0.375rem;
+        min-height: 42px;
+        padding: 0.25rem;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #4f46e5;
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #e2e8f0;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        margin-right: 0.5rem;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        margin-right: 0.25rem;
+        color: #4b5563;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Form Errors -->
+        {% if form.errors %}
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+            <p class="font-bold">Please correct the following errors:</p>
+            <ul class="list-disc pl-5 mt-2">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Main Content Column -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="id_title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                
+                <!-- Summary -->
+                <div>
+                    <label for="id_summary" class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
+                    <textarea name="summary" id="id_summary" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">{{ form.summary.value|default:'' }}</textarea>
+                </div>
+                
+                <!-- Content -->
+                <div>
+                    <label for="id_content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                    {{ form.content }}
+                </div>
+            </div>
+            
+            <!-- Sidebar Column -->
+            <div class="space-y-6">
+                <!-- Status and Publication -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3">Publication</h3>
+                    
+                    <!-- Status -->
+                    <div class="mb-4">
+                        <label for="id_status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select name="status" id="id_status" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            {% for value, text in form.fields.status.choices %}
+                            <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Publication Date -->
+                    <div>
+                        <label for="id_publication_date" class="block text-sm font-medium text-gray-700 mb-1">Publication Date</label>
+                        <input type="text" name="publication_date" id="id_publication_date" value="{{ form.publication_date.value|date:'Y-m-d H:i'|default:'' }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary datepicker">
+                    </div>
+                </div>
+                
+                <!-- Categorization -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3">Categorization</h3>
+                    
+                    <!-- Content Type -->
+                    <div class="mb-4">
+                        <label for="id_content_type" class="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
+                        <select name="content_type" id="id_content_type" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            {% for value, text in form.fields.content_type.choices %}
+                            <option value="{{ value }}" {% if form.content_type.value == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Category -->
+                    <div class="mb-4">
+                        <label for="id_category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select name="category" id="id_category" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if form.category.value|stringformat:'i' == category.id|stringformat:'i' %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div>
+                        <label for="id_tags" class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+                        <select name="tags" id="id_tags" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" multiple>
+                            {% for tag in tags %}
+                            <option value="{{ tag.id }}" {% if tag.id in form.tags.value %}selected{% endif %}>{{ tag.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Featured Image -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3">Featured Image</h3>
+                    
+                    {% if form.instance.featured_image %}
+                    <div class="mb-3">
+                        <img src="{{ form.instance.featured_image.url }}" alt="Featured Image" class="w-full h-40 object-cover rounded-md">
+                    </div>
+                    {% endif %}
+                    
+                    <input type="file" name="featured_image" id="id_featured_image" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary-dark">
+                    
+                    {% if form.instance.featured_image %}
+                    <div class="mt-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="clear_featured_image" id="id_clear_featured_image" class="rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Remove current image</span>
+                        </label>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- External Links -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3">External Links</h3>
+                    
+                    <!-- Spotify Link -->
+                    <div class="mb-4">
+                        <label for="id_spotify_link" class="block text-sm font-medium text-gray-700 mb-1">Spotify Link</label>
+                        <input type="url" name="spotify_link" id="id_spotify_link" value="{{ form.spotify_link.value|default:'' }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <!-- YouTube Link -->
+                    <div class="mb-4">
+                        <label for="id_youtube_link" class="block text-sm font-medium text-gray-700 mb-1">YouTube Link</label>
+                        <input type="url" name="youtube_link" id="id_youtube_link" value="{{ form.youtube_link.value|default:'' }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <!-- Download Link -->
+                    <div>
+                        <label for="id_download_link" class="block text-sm font-medium text-gray-700 mb-1">Download Link</label>
+                        <input type="url" name="download_link" id="id_download_link" value="{{ form.download_link.value|default:'' }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <a href="{% url 'dashboard:content_list' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                Cancel
+            </a>
+            <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition">
+                {% if form.instance.id %}Update{% else %}Create{% endif %} Content
+            </button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+<!-- CKEditor -->
+<script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+<!-- Flatpickr for date picker -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Select2 for tags -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    // Initialize CKEditor
+    ClassicEditor
+        .create(document.querySelector('#id_content'))
+        .catch(error => {
+            console.error(error);
+        });
+    
+    // Initialize Flatpickr
+    flatpickr(".datepicker", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+    });
+    
+    // Initialize Select2
+    $(document).ready(function() {
+        $('#id_tags').select2({
+            placeholder: "Select tags",
+            allowClear: true,
+            tags: true,
+            tokenSeparators: [',', ' '],
+            createTag: function(params) {
+                return {
+                    id: params.term,
+                    text: params.term,
+                    newTag: true
+                };
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,2 @@
+web: gunicorn digilib.wsgi --preload --log-file -
+release: python manage.py collectstatic --noinput

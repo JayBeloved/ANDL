@@ -1,0 +1,167 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Content Management | Dashboard{% endblock %}
+
+{% block header_title %}Content Management{% endblock %}
+
+{% block content %}
+    <!-- Filters and Actions -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2">
+            <form method="get" class="flex flex-wrap gap-2">
+                <select name="content_type" class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">All Types</option>
+                    <option value="SERMON" {% if request.GET.content_type == 'SERMON' %}selected{% endif %}>Sermons</option>
+                    <option value="BOOK" {% if request.GET.content_type == 'BOOK' %}selected{% endif %}>Books</option>
+                    <option value="WRITE_UP" {% if request.GET.content_type == 'WRITE_UP' %}selected{% endif %}>Articles</option>
+                </select>
+                
+                <select name="status" class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">All Status</option>
+                    <option value="PUBLISHED" {% if request.GET.status == 'PUBLISHED' %}selected{% endif %}>Published</option>
+                    <option value="DRAFT" {% if request.GET.status == 'DRAFT' %}selected{% endif %}>Draft</option>
+                </select>
+                
+                <select name="category" class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"i" %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button type="submit" class="bg-primary text-white rounded-md px-4 py-2 text-sm hover:bg-opacity-90 transition">
+                    <i class="fas fa-filter mr-1"></i> Filter
+                </button>
+                
+                {% if request.GET %}
+                <a href="{% url 'dashboard:content_list' %}" class="bg-gray-200 text-gray-700 rounded-md px-4 py-2 text-sm hover:bg-gray-300 transition">
+                    <i class="fas fa-times mr-1"></i> Clear
+                </a>
+                {% endif %}
+            </form>
+        </div>
+        
+        <!-- Actions -->
+        <div>
+            <a href="{% url 'dashboard:content_create' %}" class="bg-primary text-white rounded-md px-4 py-2 text-sm hover:bg-opacity-90 transition">
+                <i class="fas fa-plus mr-1"></i> Add New Content
+            </a>
+        </div>
+    </div>
+    
+    <!-- Search -->
+    <div class="mb-6">
+        <form method="get" class="relative">
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search content..." class="w-full bg-white border border-gray-300 rounded-md pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+            <button type="submit" class="absolute left-0 top-0 mt-2 ml-3 text-gray-400">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    
+    <!-- Content Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+            <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="py-3 px-4 text-left font-medium">Title</th>
+                    <th class="py-3 px-4 text-left font-medium">Type</th>
+                    <th class="py-3 px-4 text-left font-medium">Category</th>
+                    <th class="py-3 px-4 text-left font-medium">Status</th>
+                    <th class="py-3 px-4 text-left font-medium">Views</th>
+                    <th class="py-3 px-4 text-left font-medium">Date</th>
+                    <th class="py-3 px-4 text-left font-medium">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for content in content_list %}
+                <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4">
+                        <div class="flex items-center">
+                            {% if content.featured_image %}
+                            <img src="{{ content.featured_image.url }}" alt="{{ content.title }}" class="w-10 h-10 rounded object-cover mr-3">
+                            {% else %}
+                            <div class="w-10 h-10 rounded bg-gray-200 flex items-center justify-center mr-3">
+                                <i class="fas {% if content.content_type == 'SERMON' %}fa-microphone{% elif content.content_type == 'BOOK' %}fa-book{% else %}fa-file-alt{% endif %} text-gray-400"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <p class="font-medium text-gray-800">{{ content.title|truncatechars:40 }}</p>
+                                <p class="text-xs text-gray-500">By {{ content.author.get_full_name|default:content.author.username }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs rounded-full {% if content.content_type == 'SERMON' %}bg-blue-100 text-blue-800{% elif content.content_type == 'BOOK' %}bg-green-100 text-green-800{% else %}bg-purple-100 text-purple-800{% endif %}">
+                            {{ content.get_content_type_display }}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-700">{{ content.category.name }}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs rounded-full {% if content.status == 'PUBLISHED' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ content.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-700">{{ content.views_count }}</td>
+                    <td class="py-3 px-4 text-gray-700">{{ content.created_at|date:"M d, Y" }}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <a href="{% url 'dashboard:content_edit' content.id %}" class="text-blue-500 hover:text-blue-700" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'core:content_detail' content.slug %}" target="_blank" class="text-green-500 hover:text-green-700" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'dashboard:content_delete' content.id %}" class="text-red-500 hover:text-red-700" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-gray-500">No content found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-6 flex justify-center">
+        <div class="flex space-x-1">
+            {% if page_obj.has_previous %}
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page=1" class="px-4 py-2 text-gray-700 bg-white rounded-md hover:bg-gray-100">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-4 py-2 text-gray-700 bg-white rounded-md hover:bg-gray-100">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}" class="px-4 py-2 text-white bg-primary rounded-md">
+                    {{ num }}
+                </a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}" class="px-4 py-2 text-gray-700 bg-white rounded-md hover:bg-gray-100">
+                    {{ num }}
+                </a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-4 py-2 text-gray-700 bg-white rounded-md hover:bg-gray-100">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.content_type %}content_type={{ request.GET.content_type }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ page_obj.paginator.num_pages }}" class="px-4 py-2 text-gray-700 bg-white rounded-md hover:bg-gray-100">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Apostle Niyi Digital Library{% endblock %}</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="{% block meta_description %}A digital library of sermons, books, and articles by Apostle Niyi.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}sermons, books, articles, apostle niyi{% endblock %}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#4f46e5',
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a href="{% url 'core:home' %}" class="text-2xl font-bold">Apostle Niyi Library</a>
+                
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="{% url 'core:home' %}" class="hover:text-accent transition">Home</a>
+                    <div class="relative group">
+                        <button class="flex items-center hover:text-accent transition">
+                            Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                            {% for category in categories %}
+                            <a href="{% url 'core:category' category.slug %}" class="block px-4 py-2 text-gray-800 hover:bg-primary hover:text-white">
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <a href="{% url 'core:search' %}" class="hover:text-accent transition">Search</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard:index' %}" class="hover:text-accent transition">My Dashboard</a>
+                        <a href="{% url 'accounts:logout' %}" class="hover:text-accent transition">Logout</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="hover:text-accent transition">Login</a>
+                    {% endif %}
+                </nav>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav id="mobile-menu" class="md:hidden mt-3 pb-3 hidden">
+                <a href="{% url 'core:home' %}" class="block py-2 hover:text-accent transition">Home</a>
+                <div class="relative py-2">
+                    <button id="mobile-categories-button" class="flex items-center hover:text-accent transition w-full text-left">
+                        Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="mobile-categories-menu" class="mt-2 pl-4 hidden">
+                        {% for category in categories %}
+                        <a href="{% url 'core:category' category.slug %}" class="block py-2 hover:text-accent transition">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="{% url 'core:search' %}" class="block py-2 hover:text-accent transition">Search</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard:index' %}" class="block py-2 hover:text-accent transition">Dashboard</a>
+                    <a href="{% url 'accounts:logout' %}" class="block py-2 hover:text-accent transition">Logout</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="block py-2 hover:text-accent transition">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mx-auto px-4 py-3">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}bg-green-100 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 border-yellow-500 text-yellow-700{% else %}bg-blue-100 border-blue-500 text-blue-700{% endif %} px-4 py-3 rounded relative border-l-4 mb-3" role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+            <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3 close-alert">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Apostle Niyi Digital Library</h3>
+                    <p class="text-gray-300">A collection of sermons, books, and articles to help you grow spiritually.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'core:home' %}" class="text-gray-300 hover:text-white transition">Home</a></li>
+                        <li><a href="{% url 'core:search' %}" class="text-gray-300 hover:text-white transition">Search</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'accounts:logout' %}" class="text-gray-300 hover:text-white transition">Logout</a></li>
+                        {% else %}
+                        <li><a href="{% url 'accounts:login' %}" class="text-gray-300 hover:text-white transition">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-youtube text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; {% now "Y" %} Apostle Niyi Digital Library. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Mobile categories toggle
+        document.getElementById('mobile-categories-button').addEventListener('click', function() {
+            document.getElementById('mobile-categories-menu').classList.toggle('hidden');
+        });
+        
+        // Alert close buttons
+        document.querySelectorAll('.close-alert').forEach(function(button) {
+            button.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

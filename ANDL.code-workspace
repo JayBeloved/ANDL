@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Resources/soft-ui-dashboard-tailwind-main"
+		}
+	],
+	"settings": {
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"database": "db.sqlite3",
+				"name": "ANDL"
+			}
+		],
+		"sqltools.useNodeRuntime": true
+	}
+}

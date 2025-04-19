@@ -23,6 +23,8 @@ djangorestframework = "*"
 django-ckeditor = "*"
 django-filter = "*"
 pillow = "*"
+whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 

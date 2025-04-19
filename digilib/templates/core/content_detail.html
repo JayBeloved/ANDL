@@ -3,17 +3,187 @@
 
 {% block title %}{{ content.title }} - Apostle Niyi Digital Library{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Content formatting styles */
+    .content-formatted h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: #1e293b;
+    }
+    
+    .content-formatted h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: #1e293b;
+    }
+    
+    .content-formatted h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 1.25rem;
+        margin-bottom: 0.75rem;
+        color: #1e293b;
+    }
+    
+    .content-formatted h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+        color: #1e293b;
+    }
+    
+    .content-formatted p {
+        margin-bottom: 1rem;
+        line-height: 1.7;
+    }
+    
+    .content-formatted ul, .content-formatted ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .content-formatted ul li {
+        list-style-type: disc;
+        margin-bottom: 0.5rem;
+    }
+    
+    .content-formatted ol li {
+        list-style-type: decimal;
+        margin-bottom: 0.5rem;
+    }
+    
+    .content-formatted a {
+        color: #1e40af;
+        text-decoration: underline;
+    }
+    
+    .content-formatted blockquote {
+        border-left: 4px solid #e2e8f0;
+        padding-left: 1rem;
+        font-style: italic;
+        margin: 1rem 0;
+        color: #4a5568;
+    }
+    
+    .content-formatted img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .content-formatted table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+    }
+    
+    .content-formatted table th,
+    .content-formatted table td {
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem;
+    }
+    
+    .content-formatted table th {
+        background-color: #f8fafc;
+        font-weight: 600;
+    }
+    
+    .content-formatted pre,
+    .content-formatted code {
+        background-color: #f8fafc;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        font-family: monospace;
+    }
+    
+    .content-formatted pre {
+        padding: 1rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+    
+    /* CKEditor specific styles */
+    .content-formatted figure {
+        margin: 1.5rem 0;
+    }
+    
+    .content-formatted figure img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .content-formatted figure figcaption {
+        text-align: center;
+        font-style: italic;
+        color: #6b7280;
+        margin-top: 0.5rem;
+    }
+    
+    .content-formatted .image {
+        display: block;
+        margin: 1.5rem auto;
+        max-width: 100%;
+    }
+    
+    .content-formatted .image-style-align-left {
+        float: left;
+        margin-right: 1.5rem;
+        margin-bottom: 1rem;
+        max-width: 50%;
+    }
+    
+    .content-formatted .image-style-align-right {
+        float: right;
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+        max-width: 50%;
+    }
+    
+    .content-formatted .image-style-align-center {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+    
+    /* Clear floats after images */
+    .content-formatted::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .content-formatted .image-style-align-left,
+        .content-formatted .image-style-align-right {
+            float: none;
+            margin: 1.5rem auto;
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <article class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <article class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
         <!-- Content Header -->
         <header class="mb-8">
             <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full mb-3">{{ content.get_content_type_display }}</span>
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{{ content.title }}</h1>
-            <div class="text-gray-500 mb-4">
-                <span>By {{ content.author.get_full_name }}</span> |
-                <span>{{ content.publication_date|date:"F j, Y" }}</span> |
-                <span>Category: <a href="{% url 'core:category' content.category.slug %}" class="text-primary hover:underline">{{ content.category.name }}</a></span>
+            <div class="text-gray-500 mb-4 flex flex-wrap items-center gap-2">
+                <span class="flex items-center"><i class="fas fa-user mr-1"></i> {{ content.author.get_full_name }}</span>
+                <span class="hidden sm:inline">|</span>
+                <span class="flex items-center"><i class="far fa-calendar-alt mr-1"></i> {{ content.publication_date|date:"F j, Y" }}</span>
+                <span class="hidden sm:inline">|</span>
+                <span class="flex items-center"><i class="fas fa-folder mr-1"></i> <a href="{% url 'core:category' content.category.slug %}" class="text-primary hover:underline">{{ content.category.name }}</a></span>
             </div>
             <div class="flex flex-wrap gap-2 mb-4">
                 {% for tag in content.tags.all %}
@@ -24,27 +194,40 @@
 
         <!-- Content Body -->
         <div class="prose max-w-none mb-8 text-gray-700">
-            {{ content.summary|linebreaks }}
+            <!-- Display the summary as an introduction -->
+            <div class="text-lg font-medium mb-6 text-gray-600 border-l-4 border-primary pl-4 py-2 bg-gray-50 rounded">
+                {{ content.summary|linebreaks }}
+            </div>
+            
+            <!-- Display the full content with HTML formatting preserved -->
+            <div class="content-formatted leading-relaxed">
+                {{ content.content|safe }}
+            </div>
         </div>
 
         <!-- External Links -->
         <div class="mb-8">
             {% if content.spotify_link or content.youtube_link or content.download_link %}
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">External Resources</h3>
-                <div class="space-y-2">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                    <i class="fas fa-external-link-alt mr-2 text-primary"></i> External Resources
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {% if content.spotify_link %}
-                        <a href="{{ content.spotify_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-spotify text-green-500 text-xl mr-3"></i> Listen on Spotify
+                        <a href="{{ content.spotify_link }}" target="_blank" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300 border border-gray-200 hover:border-green-500 group">
+                            <i class="fab fa-spotify text-green-500 text-2xl mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span>Listen on Spotify</span>
                         </a>
                     {% endif %}
                     {% if content.youtube_link %}
-                        <a href="{{ content.youtube_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-youtube text-red-500 text-xl mr-3"></i> Watch on YouTube
+                        <a href="{{ content.youtube_link }}" target="_blank" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300 border border-gray-200 hover:border-red-500 group">
+                            <i class="fab fa-youtube text-red-500 text-2xl mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span>Watch on YouTube</span>
                         </a>
                     {% endif %}
                     {% if content.download_link %}
-                        <a href="{{ content.download_link }}" target="_blank" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
-                            <i class="fas fa-download text-blue-500 text-xl mr-3"></i> Download Content
+                        <a href="{{ content.download_link }}" target="_blank" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300 border border-gray-200 hover:border-blue-500 group">
+                            <i class="fas fa-download text-blue-500 text-2xl mr-3 group-hover:scale-110 transition-transform"></i>
+                            <span>Download Content</span>
                         </a>
                     {% endif %}
                 </div>
@@ -54,17 +237,21 @@
         <!-- Related Content -->
         {% if related_contents %}
             <section>
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Related Content</h3>
+                <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                    <i class="fas fa-link mr-2 text-primary"></i> Related Content
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {% for related in related_contents %}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 flex flex-col h-full">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 flex flex-col h-full hover:border-primary">
                             <div class="p-4 flex-grow">
                                 <span class="inline-block px-2 py-1 bg-primary text-white text-xs font-medium rounded-full mb-2">{{ related.get_content_type_display }}</span>
-                                <h4 class="text-lg font-semibold mb-2 text-gray-800">{{ related.title }}</h4>
+                                <h4 class="text-lg font-semibold mb-2 text-gray-800 hover:text-primary transition duration-300">{{ related.title }}</h4>
                                 <p class="text-gray-600 text-sm mb-3">{{ related.summary|truncatewords:15 }}</p>
                             </div>
                             <div class="p-3 border-t border-gray-100">
-                                <a href="{% url 'core:content_detail' related.slug %}" class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition duration-300">Read More</a>
+                                <a href="{% url 'core:content_detail' related.slug %}" class="inline-block w-full text-center px-3 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+                                    <i class="fas fa-arrow-right mr-1"></i> Read More
+                                </a>
                             </div>
                         </div>
                     {% endfor %}

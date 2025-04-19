@@ -1,10 +1,11 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Apostle Niyi Digital Library{% endblock %}</title>
-    
+    <title>{% block title %}Apostle Niyi Digital Library{% endblock %}</title>    {% load static %}    
     <!-- Meta tags -->
     <meta name="description" content="{% block meta_description %}A digital library of sermons, books, and articles by Apostle Niyi.{% endblock %}">
     <meta name="keywords" content="{% block meta_keywords %}sermons, books, articles, apostle niyi{% endblock %}">
@@ -36,7 +37,10 @@
     <header class="bg-primary text-white shadow-md">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
-                <a href="{% url 'core:home' %}" class="text-2xl font-bold">Apostle Niyi Library</a>
+                <a href="{% url 'core:home' %}" class="flex items-center">
+                    <img src="{% static 'images/logo.svg' %}" alt="Apostle Niyi Digital Library" class="h-10 mr-2">
+                    <span class="text-lg font-semibold">Digital <br/> Library</span>
+                </a>
                 
                 <!-- Mobile menu button -->
                 <button id="mobile-menu-button" class="md:hidden focus:outline-none">

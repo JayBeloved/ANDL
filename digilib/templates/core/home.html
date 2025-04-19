@@ -4,9 +4,32 @@
 {% block title %}Home - Apostle Niyi Digital Library{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-8">    <!-- Hero Section with Changing Background -->
+    <section class="relative overflow-hidden rounded-xl mb-12 hero-section">
+        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_1.jpg' %}');"></div>
+        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_2.jpg' %}');"></div>
+        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_3.jpg' %}');"></div>
+        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_4.jpg' %}');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row items-center p-8 md:p-12 min-h-[500px]">
+            <div class="md:w-1/2 text-white">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Apostle Niyi Makinde</h2>
+                <div class="prose prose-lg prose-invert max-w-none">
+                    <p class="mb-4">Niyi Makinde is an Apostle and Author, a Leadership Expert, and Quotient Coach. His passion is to raise ministers and leaders.</p>
+                    <p class="mb-4">He has written many books that are fast spreading across places. His books are always flooded with rich content and great wisdom. He is highly versatile!</p>
+                    <p>Apostle Niyi is the President of Rebirth Global Church– a network of churches across the globe.</p>
+                </div>
+                <div class="mt-8">
+                    <a href="#featured-content" class="inline-block px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">Explore Library</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
     <!-- Featured Content Carousel -->
-    <section class="mb-12">
+    <section id="featured-content" class="mb-12">
         <div id="featuredCarousel" class="relative">
             <div class="carousel-container overflow-hidden rounded-xl shadow-lg">
                 <div class="carousel-inner flex transition-transform duration-500">
@@ -91,8 +114,8 @@
                     {% for num in page_obj.paginator.page_range %}
                         {% if page_obj.number == num %}
                             <li>
-                                <span class="px-4 py-2 bg-primary text-white border border-primary rounded-md">{{ num }}</span>
-                            </li>
+                                <span class="px-4 py-2 bg-primary text-white rounded-md"> 
+                                {{ num }}</span></li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                             <li>
                                 <a href="?page={{ num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300">{{ num }}</a>
@@ -147,31 +170,45 @@
         }
         
         // Previous button click
-        prevButton.addEventListener('click', () => {
+        prevButton.addEventListener('click', function() {
             currentIndex = (currentIndex - 1 + itemCount) % itemCount;
             updateCarousel();
         });
         
         // Next button click
-        nextButton.addEventListener('click', () => {
+        nextButton.addEventListener('click', function() {
             currentIndex = (currentIndex + 1) % itemCount;
             updateCarousel();
         });
         
         // Indicator clicks
         indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
+            indicator.addEventListener('click', function() {
                 currentIndex = index;
                 updateCarousel();
             });
         });
+        // Hero background rotation
+        const heroBackgrounds = document.querySelectorAll('.hero-section > div.absolute.bg-cover');
+        let currentBgIndex = 0;
         
-        // Auto slide every 5 seconds
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % itemCount;
-            updateCarousel();
+        // Show the first background initially
+        heroBackgrounds[0].classList.add('opacity-100');
+        
+        // Rotate backgrounds every 5 seconds
+        setInterval(function() {
+            // Hide current background
+            heroBackgrounds[currentBgIndex].classList.remove('opacity-100');
+            
+            // Move to next background
+            currentBgIndex = (currentBgIndex + 1) % heroBackgrounds.length;
+            
+            // Show new background
+            heroBackgrounds[currentBgIndex].classList.add('opacity-100');
         }, 5000);
     });
 </script>
 {% endblock %}
+        
+
 {% endblock content %}

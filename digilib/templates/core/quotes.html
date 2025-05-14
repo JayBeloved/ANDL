@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Quotes - Apostle Niyi Digital Library{% endblock %}
+
+{% block extra_css %}
+<style>
+    .masonry-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 20px;
+        grid-auto-flow: dense;
+    }
+    
+    .quote-card {
+        break-inside: avoid;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    
+    .quote-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    @media (min-width: 768px) {
+        .masonry-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .masonry-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Quotes Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Inspirational Quotes</h1>
+        <p class="text-xl text-gray-600">Wisdom and inspiration from Apostle Niyi Makinde</p>
+    </header>
+
+    <!-- Search and Filter -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="w-full md:w-1/2">
+                <form method="get" action="" class="flex">
+                    <input type="text" name="search" placeholder="Search quotes..." value="{{ request.GET.search }}" class="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-primary focus:border-primary">
+                    <button type="submit" class="px-4 py-2 bg-primary text-white font-medium rounded-r-lg hover:bg-primary-dark transition duration-300">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="w-full md:w-1/2 flex flex-wrap gap-2">
+                <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary focus:border-primary">
+                    <option value="">All Categories</option>
+                    {% for category in quote_categories %}
+                    <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <select id="tag-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary focus:border-primary">
+                    <option value="">All Tags</option>
+                    {% for tag in tags %}
+                    <option value="{{ tag.slug }}" {% if request.GET.tag == tag.slug %}selected{% endif %}>{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quotes Grid (Pinterest Style) -->
+    <div class="masonry-grid">
+        {% for content in quotes %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 overflow-hidden h-full">
+            {% if content.default_background %}
+            <img src="{{ content.default_background.image_url }}" alt="Quote Background" class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-6">
+                <blockquote class="text-lg font-semibold mb-4 text-gray-800">
+                    "{{ content.quote_text|truncatechars:100 }}"
+                </blockquote>
+                <p class="text-right text-gray-600 mb-4">- Apostle Niyi Makinde</p>
+                
+                {% if content.category %}
+                <div class="mb-3">
+                    <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">{{ content.category.name }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-gray-500 text-sm">
+                        <i class="fas fa-eye mr-1"></i> {{ content.views_count }}
+                    </span>
+                    <a href="{% url 'core:quote_share' content.id %}" class="inline-block px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+                        <i class="fas fa-share-alt mr-1"></i> Share
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div class="col-span-full">
+                <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded">
+                    No quotes available yet.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <nav class="mt-8 flex justify-center">
+            <ul class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                    <li>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li>
+                            <span class="px-4 py-2 bg-primary text-white border border-primary rounded-md">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li>
+                            <a href="?page={{ num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li>
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock content %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryFilter = document.getElementById('category-filter');
+        const tagFilter = document.getElementById('tag-filter');
+        
+        // Handle category filter change
+        categoryFilter.addEventListener('change', function() {
+            const categorySlug = this.value;
+            window.location.href = categorySlug ? 
+                `?category=${categorySlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}` : 
+                `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}`;
+        });
+        
+        // Handle tag filter change
+        tagFilter.addEventListener('change', function() {
+            const tagSlug = this.value;
+            window.location.href = tagSlug ? 
+                `?tag=${tagSlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}` : 
+                `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}`;
+        });
+    });
+</script>

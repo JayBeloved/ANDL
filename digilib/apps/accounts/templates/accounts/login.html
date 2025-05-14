@@ -4,23 +4,108 @@
 
 {% block title %}Login | {{ block.super }}{% endblock %}
 
+{% block extra_css %}
+<style>
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  .login-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+  .login-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .login-title {
+    font-weight: 700;
+    color: #333;
+  }
+  .login-btn {
+    padding: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+  }
+  .login-links {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .login-links a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .login-links a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-control {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+  }
+  .form-control:focus {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
+<div class="login-container">
+  <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Login</h2>
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <div class="col-md-5">
+        <div class="text-center mb-4">
+          <img src="{% static 'images/logo.svg' %}" alt="Logo" height="60" class="mb-3">
         </div>
+        
+        <div class="login-card card">
+          <div class="card-body p-4 p-md-5">
+            <div class="login-header">
+              <h2 class="login-title text-center">Welcome Back</h2>
+              <p class="text-muted text-center mb-0">Sign in to your account</p>
+            </div>
+            
+            <form method="post" novalidate>
+              {% csrf_token %}
+              
+              {% for field in form %}
+                <div class="form-group">
+                  {{ field|as_crispy_field }}
+                </div>
+              {% endfor %}
+              
+              <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="login-btn btn btn-primary">Sign In</button>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

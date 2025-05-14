@@ -124,6 +124,19 @@
                         </select>
                     </div>
                     
+                    <!-- Subcategory -->
+                    <div class="mb-4">
+                        <label for="id_subcategory" class="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                        <select name="subcategory" id="id_subcategory" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">-- Select Subcategory --</option>
+                            {% if form.subcategory.value %}
+                                {% for subcategory in subcategories %}
+                                    <option value="{{ subcategory.id }}" {% if form.subcategory.value|stringformat:'i' == subcategory.id|stringformat:'i' %}selected{% endif %}>{{ subcategory.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                    
                     <!-- Tags -->
                     <div>
                         <label for="id_tags" class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
@@ -230,6 +243,38 @@
                     text: params.term,
                     newTag: true
                 };
+            }
+        });
+        
+        // Handle category change to load subcategories
+        $('#id_category').change(function() {
+            const categoryId = $(this).val();
+            if (categoryId) {
+                // Clear current options
+                $('#id_subcategory').empty().append('<option value="">-- Select Subcategory --</option>');
+                
+                // Fetch subcategories via AJAX
+                $.ajax({
+                    url: '/dashboard/api/subcategories/' + categoryId + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.subcategories && data.subcategories.length > 0) {
+                            // Add new options
+                            $.each(data.subcategories, function(index, subcategory) {
+                                $('#id_subcategory').append(
+                                    $('<option></option>').val(subcategory.id).text(subcategory.name)
+                                );
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching subcategories:', error);
+                    }
+                });
+            } else {
+                // Clear subcategory dropdown if no category selected
+                $('#id_subcategory').empty().append('<option value="">-- Select Subcategory --</option>');
             }
         });
     });

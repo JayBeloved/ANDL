@@ -25,7 +25,26 @@
                 </span>
                 <span class="opacity-80 ml-1">since last month</span>
             </div>
-        </div>
+        </div>        
+        <!-- Total Quotes -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-light opacity-80">Total Quotes</p>
+                    <h3 class="text-3xl font-bold">{{ quote_count }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-30 rounded-full p-3">
+                    <i class="fas fa-quote-right text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-light">
+                <span class="{% if quote_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                    <i class="fas {% if quote_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                    {{ quote_growth|floatformat:1 }}%
+                </span>
+                <span class="opacity-80 ml-1">since last month</span>
+            </div>
+        </div>        
         
         <!-- Total Views -->
         <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl p-6 text-white shadow-lg">
@@ -46,26 +65,8 @@
                 <span class="opacity-80 ml-1">since last month</span>
             </div>
         </div>
-        
-        <!-- Total Downloads -->
-        <div class="bg-gradient-to-br from-green-500 to-teal-500 rounded-xl p-6 text-white shadow-lg">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm font-light opacity-80">Total Downloads</p>
-                    <h3 class="text-3xl font-bold">{{ total_downloads }}</h3>
-                </div>
-                <div class="bg-white bg-opacity-30 rounded-full p-3">
-                    <i class="fas fa-download text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 text-sm font-light">
-                <span class="{% if downloads_growth >= 0 %}text-green-300{% else %}text-red-300{% endif %}">
-                    <i class="fas {% if downloads_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
-                    {{ downloads_growth|floatformat:1 }}%
-                </span>
-                <span class="opacity-80 ml-1">since last month</span>
-            </div>
-        </div>
+
+
         
         <!-- Total Users -->
         <div class="bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl p-6 text-white shadow-lg">
@@ -88,7 +89,7 @@
         </div>
     </div>
     
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Recent Content -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex justify-between items-center mb-6">
@@ -160,5 +161,69 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
-{% endblock %}
+    </div>    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Quotes -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Recent Quotes</h3>
+                <!-- <a href="{% url 'dashboard:quote_list' %}" class="text-sm text-primary hover:underline">View All</a> -->
+            </div>
+            
+            <div class="space-y-4">
+                {% for quote in recent_quotes %}
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                        <i class="fas fa-quote-left text-gray-400"></i>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-800">{{ quote.quote_text|truncatechars:60 }}</h4>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span class="mr-3">{{ quote.category.name|default:"Uncategorized" }}</span>
+                            <span>{{ quote.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- <a href="{% url 'dashboard:quote_edit' quote.id %}" class="text-gray-500 hover:text-primary">
+                        <i class="fas fa-edit"></i>
+                    </a> -->
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No quotes available.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Popular Quotes -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Popular Quotes</h3>
+                <!-- <a href="{% url 'dashboard:quote_list' %}?sort=views" class="text-sm text-primary hover:underline">View All</a> -->
+            </div>
+            
+            <div class="space-y-4">
+                {% for quote in popular_quotes %}
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                        <i class="fas fa-quote-left text-gray-400"></i>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-800">{{ quote.quote_text|truncatechars:60 }}</h4>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span class="mr-3"><i class="far fa-eye mr-1"></i> {{ quote.views_count }}</span>
+                            <span><i class="fas fa-share-alt mr-1"></i> {{ quote.shares_count }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- <a href="{% url 'dashboard:quote_edit' quote.id %}" class="text-gray-500 hover:text-primary">
+                        <i class="fas fa-edit"></i>
+                    </a> -->
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No quotes available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>{% endblock %}

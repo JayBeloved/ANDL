@@ -18,8 +18,8 @@
                 extend: {
                     colors: {
                         primary: '#1e40af',
-                        secondary: '#4f46e5',
-                        accent: '#f59e0b',
+                        secondary: '#b0b0b0', 
+                        accent: '#1e00ff',
                     }
                 }
             }
@@ -34,12 +34,11 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50">
     <!-- Header -->
-    <header class="bg-primary text-white shadow-md">
+    <header class="bg-secondary text-white shadow-md">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <a href="{% url 'core:home' %}" class="flex items-center">
                     <img src="{% static 'images/logo.svg' %}" alt="Apostle Niyi Digital Library" class="h-10 mr-2">
-                    <span class="text-lg font-semibold">Digital <br/> Library</span>
                 </a>
                 
                 <!-- Mobile menu button -->
@@ -50,7 +49,7 @@
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-6 items-center">
                     <a href="{% url 'core:home' %}" class="hover:text-accent transition">Home</a>
-                    <div class="relative group">
+                    <!-- <div class="relative group">
                         <button class="flex items-center hover:text-accent transition">
                             Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
                         </button>
@@ -61,7 +60,9 @@
                             </a>
                             {% endfor %}
                         </div>
-                    </div>
+                    </div> -->
+                    <a href="{% url 'core:quotes' %}" class="hover:text-accent transition">Quotes</a>
+                    <a href="{% url 'core:books' %}" class="hover:text-accent transition">Books</a>
                     <a href="{% url 'core:search' %}" class="hover:text-accent transition">Search</a>
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboard:index' %}" class="hover:text-accent transition">My Dashboard</a>
@@ -87,6 +88,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                <a href="{% url 'core:quotes' %}" class="block py-2 hover:text-accent transition">Quotes</a>
                 <a href="{% url 'core:search' %}" class="block py-2 hover:text-accent transition">Search</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'dashboard:index' %}" class="block py-2 hover:text-accent transition">Dashboard</a>
@@ -129,6 +131,7 @@
                     <h3 class="text-xl font-bold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
                         <li><a href="{% url 'core:home' %}" class="text-gray-300 hover:text-white transition">Home</a></li>
+                        <li><a href="{% url 'core:quotes' %}" class="text-gray-300 hover:text-white transition">Quotes</a></li>
                         <li><a href="{% url 'core:search' %}" class="text-gray-300 hover:text-white transition">Search</a></li>
                         {% if user.is_authenticated %}
                         <li><a href="{% url 'accounts:logout' %}" class="text-gray-300 hover:text-white transition">Logout</a></li>

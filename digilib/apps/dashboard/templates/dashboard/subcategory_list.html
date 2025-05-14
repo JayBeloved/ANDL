@@ -1,0 +1,238 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Subcategories | Dashboard{% endblock %}
+
+{% block header_title %}Subcategory Management{% endblock %}
+
+{% block content %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Subcategory List -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="font-medium text-gray-800">Subcategories</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent Category</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for subcategory in subcategories %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        {% if subcategory.image %}
+                                        <div class="flex-shrink-0 h-10 w-10 mr-3">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ subcategory.image.url }}" alt="">
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ subcategory.name }}</div>
+                                            <div class="text-sm text-gray-500">{{ subcategory.slug }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ subcategory.parent_category.name }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ subcategory.description|truncatechars:50 }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ subcategory.contents.count }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <button type="button" class="text-blue-500 hover:text-blue-700" 
+                                                data-edit-id="{{ subcategory.id }}"
+                                                data-edit-name="{{ subcategory.name }}"
+                                                data-edit-description="{{ subcategory.description }}"
+                                                data-edit-parent="{{ subcategory.parent_category.id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form method="post" action="{% url 'dashboard:subcategory_delete' subcategory.id %}" class="inline" onsubmit="return confirm('Are you sure you want to delete this subcategory?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    No subcategories found. Create your first subcategory using the form.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if is_paginated %}
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex justify-center">
+                        <div class="flex space-x-1">
+                            {% if page_obj.has_previous %}
+                            <a href="?page=1" class="px-3 py-1 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                <a href="?page={{ num }}" class="px-3 py-1 text-white bg-primary rounded-md">
+                                    {{ num }}
+                                </a>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <a href="?page={{ num }}" class="px-3 py-1 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                    {{ num }}
+                                </a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Subcategory Form -->
+        <div>
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="font-medium text-gray-800" id="form-title">Add New Subcategory</h3>
+                </div>
+                
+                <div class="p-6">
+                    <form method="post" action="{% url 'dashboard:subcategory_create' %}" enctype="multipart/form-data" id="subcategory-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="edit_id" id="edit_id" value="">
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label for="parent_category" class="block text-sm font-medium text-gray-700 mb-1">Parent Category</label>
+                                <select name="parent_category" id="parent_category" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">-- Select Parent Category --</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input type="text" name="name" id="name" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" id="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Image (Optional)</label>
+                                <input type="file" name="image" id="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary-dark">
+                                <p class="text-xs text-gray-500 mt-1">Recommended size: 300x300 pixels</p>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <button type="submit" class="w-full bg-primary text-white rounded-md py-2 hover:bg-opacity-90 transition" id="submit-button">Add Subcategory</button>
+                            </div>
+                            
+                            <div id="cancel-button-container" class="hidden pt-2">
+                                <button type="button" class="w-full bg-gray-200 text-gray-700 rounded-md py-2 hover:bg-gray-300 transition" id="cancel-button">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('subcategory-form');
+        const formTitle = document.getElementById('form-title');
+        const submitButton = document.getElementById('submit-button');
+        const cancelButton = document.getElementById('cancel-button');
+        const cancelButtonContainer = document.getElementById('cancel-button-container');
+        const editIdInput = document.getElementById('edit_id');
+        const nameInput = document.getElementById('name');
+        const descriptionInput = document.getElementById('description');
+        const parentCategorySelect = document.getElementById('parent_category');
+        
+        // Edit button click handlers
+        const editButtons = document.querySelectorAll('[data-edit-id]');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.getAttribute('data-edit-id');
+                const name = button.getAttribute('data-edit-name');
+                const description = button.getAttribute('data-edit-description');
+                const parentId = button.getAttribute('data-edit-parent');
+                
+                // Update form
+                editIdInput.value = id;
+                nameInput.value = name;
+                descriptionInput.value = description;
+                parentCategorySelect.value = parentId;
+                
+                // Update UI
+                formTitle.textContent = 'Edit Subcategory';
+                submitButton.textContent = 'Update Subcategory';
+                cancelButtonContainer.classList.remove('hidden');
+                
+                // Change form action
+                form.action = form.action.replace('create', 'update');
+                
+                // Scroll to form on mobile
+                if (window.innerWidth < 768) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Cancel button handler
+        cancelButton.addEventListener('click', () => {
+            resetForm();
+        });
+        
+        function resetForm() {
+            // Reset form fields
+            form.reset();
+            editIdInput.value = '';
+            
+            // Reset UI
+            formTitle.textContent = 'Add New Subcategory';
+            submitButton.textContent = 'Add Subcategory';
+            cancelButtonContainer.classList.add('hidden');
+            
+            // Reset form action
+            form.action = form.action.replace('update', 'create');
+        }
+    });
+</script>
+{% endblock %}

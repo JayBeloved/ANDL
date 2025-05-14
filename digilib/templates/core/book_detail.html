@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ book.title }} - {{ book.author_name }} | Apostle Niyi Digital Library{% endblock %}
+
+{% block meta_description %}{{ book.synopsis|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Book Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ book.title }}</h1>
+        <p class="text-xl text-gray-600">By {{ book.author_name }}</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Book Information -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">About the Book</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">Author</h3>
+                    <p class="text-gray-800">{{ book.author_name }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">Synopsis</h3>
+                    <p class="text-gray-800">{{ book.synopsis }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">Category</h3>
+                    <p class="text-gray-800">
+                        <a href="{% url 'core:category' book.category.slug %}" class="text-primary hover:underline">{{ book.category.name }}</a>
+                        {% if book.subcategory %}
+                        / <a href="{% url 'core:subcategory' book.category.slug book.subcategory.slug %}" class="text-primary hover:underline">{{ book.subcategory.name }}</a>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                {% if book.tags.exists %}
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in book.tags.all %}
+                        <a href="{% url 'core:tag' tag.slug %}" class="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full hover:bg-gray-200 transition duration-300">
+                            {{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if book.publication_date or book.publisher or book.isbn or book.pages %}
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">Book Details</h3>
+                    <ul class="text-gray-800 text-sm">
+                        {% if book.publication_date %}
+                        <li class="mb-1"><span class="font-medium">Published:</span> {{ book.publication_date|date:"F j, Y" }}</li>
+                        {% endif %}
+                        {% if book.publisher %}
+                        <li class="mb-1"><span class="font-medium">Publisher:</span> {{ book.publisher }}</li>
+                        {% endif %}
+                        {% if book.isbn %}
+                        <li class="mb-1"><span class="font-medium">ISBN:</span> {{ book.isbn }}</li>
+                        {% endif %}
+                        {% if book.pages %}
+                        <li class="mb-1"><span class="font-medium">Pages:</span> {{ book.pages }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Book Preview -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Book Preview</h2>
+                
+                <div class="flex flex-col md:flex-row items-center mb-6">
+                    <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6">
+                        <img src="{{ book.cover_image.url }}" alt="{{ book.title }} Cover" class="w-full h-auto rounded-lg shadow-md">
+                    </div>
+                    
+                    <div class="w-full md:w-2/3">
+                        <h3 class="text-xl font-semibold mb-2">{{ book.title }}</h3>
+                        <p class="text-gray-600 mb-4">By {{ book.author_name }}</p>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            <a href="{{ book.pdf_file.url }}" download class="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+                                <i class="fas fa-download"></i> Download PDF
+                            </a>
+                            
+                            <button id="download-btn" data-slug="{{ book.slug }}" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300">
+                                <i class="fas fa-book-reader"></i> Read Online
+                            </button>
+                            
+                            <div class="mt-4 w-full">
+                                <p class="text-sm text-gray-500">
+                                    <i class="fas fa-eye mr-1"></i> {{ book.views_count }} views
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-download mr-1"></i> <span id="download-count">{{ book.downloads_count }}</span> downloads
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Book Synopsis -->
+                <div class="mt-6 pt-6 border-t border-gray-100">
+                    <h3 class="text-lg font-semibold mb-3">Synopsis</h3>
+                    <p class="text-gray-800">{{ book.synopsis }}</p>
+                </div>
+            </div>
+            
+            <!-- Related Books -->
+            {% if related_books %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Related Books</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% for related_book in related_books %}
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <img src="{{ related_book.cover_image.url }}" alt="{{ related_book.title }}" class="w-full h-40 object-cover rounded-md mb-3">
+                        <h3 class="font-medium text-gray-800 mb-1">{{ related_book.title }}</h3>
+                        <p class="text-sm text-gray-600 mb-2">By {{ related_book.author_name }}</p>
+                        <a href="{% url 'core:book_detail' related_book.slug %}" class="text-primary hover:underline text-sm">View Details</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="mt-6">
+                <a href="{% url 'core:books' %}" class="text-primary hover:text-primary-dark transition duration-300">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Books
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('download-btn');
+        const downloadCount = document.getElementById('download-count');
+        
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                const bookSlug = this.dataset.slug;
+                
+                // Send AJAX request to increment download count
+                fetch(`/book/${bookSlug}/download/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update download count
+                        downloadCount.textContent = data.download_count;
+                        
+                        // Redirect to PDF file
+                        window.open('{{ book.pdf_file.url }}', '_blank');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        }
+    });
+</script>
+{% endblock content %}

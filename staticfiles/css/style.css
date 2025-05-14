@@ -1,0 +1,67 @@
+/* Custom styles for Apostle Niyi Digital Library */
+
+/* General styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Content cards */
+.content-card {
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+.content-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Category badges */
+.category-badge {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Tags */
+.tag {
+    font-size: 0.8rem;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+    display: inline-block;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+.footer a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #007bff;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .content-card {
+        margin-bottom: 1rem;
+    }
+}

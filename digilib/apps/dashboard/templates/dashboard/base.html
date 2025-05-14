@@ -140,14 +140,34 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name and 'quote' not in request.resolver_match.url_name and 'background' not in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-file-alt mr-3"></i>
                     <span>Content</span>
                 </a>
                 
-                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                <!-- <a href="{% url 'dashboard:quote_list' %}" class="nav-link flex items-center text-gray-700 {% if 'quote' in request.resolver_match.url_name and 'category' not in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-quote-left mr-3"></i>
+                    <span>Quotes</span>
+                </a> -->
+                
+                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name and 'quote' not in request.resolver_match.url_name and 'sub' not in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-folder mr-3"></i>
                     <span>Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:subcategory_list' %}" class="nav-link flex items-center text-gray-700 {% if 'subcategory' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder-tree mr-3"></i>
+                    <span>Subcategories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:quote_category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'quote_category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-quote-right mr-3"></i>
+                    <span>Quote Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:background_list' %}" class="nav-link flex items-center text-gray-700 {% if 'background' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-image mr-3"></i>
+                    <span>Background Images</span>
                 </a>
                 
                 <a href="{% url 'dashboard:tag_list' %}" class="nav-link flex items-center text-gray-700 {% if 'tag' in request.resolver_match.url_name %}active{% endif %}">
@@ -203,14 +223,34 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'dashboard:content_list' %}" class="nav-link flex items-center text-gray-700 {% if 'content' in request.resolver_match.url_name and 'quote' not in request.resolver_match.url_name and 'background' not in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-file-alt mr-3"></i>
                     <span>Content</span>
                 </a>
                 
-                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'dashboard:quote_list' %}" class="nav-link flex items-center text-gray-700 {% if 'quote' in request.resolver_match.url_name and 'category' not in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-quote-left mr-3"></i>
+                    <span>Quotes</span>
+                </a>
+                
+                <a href="{% url 'dashboard:category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'category' in request.resolver_match.url_name and 'quote' not in request.resolver_match.url_name and 'sub' not in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-folder mr-3"></i>
                     <span>Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:subcategory_list' %}" class="nav-link flex items-center text-gray-700 {% if 'subcategory' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder-tree mr-3"></i>
+                    <span>Subcategories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:quote_category_list' %}" class="nav-link flex items-center text-gray-700 {% if 'quote_category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-quote-right mr-3"></i>
+                    <span>Quote Categories</span>
+                </a>
+                
+                <a href="{% url 'dashboard:background_list' %}" class="nav-link flex items-center text-gray-700 {% if 'background' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-image mr-3"></i>
+                    <span>Background Images</span>
                 </a>
                 
                 <a href="{% url 'dashboard:tag_list' %}" class="nav-link flex items-center text-gray-700 {% if 'tag' in request.resolver_match.url_name %}active{% endif %}">

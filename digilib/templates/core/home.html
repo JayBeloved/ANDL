@@ -4,28 +4,33 @@
 {% block title %}Home - Apostle Niyi Digital Library{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">    <!-- Hero Section with Changing Background -->
-    <section class="relative overflow-hidden rounded-xl mb-12 hero-section">
-        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_1.jpg' %}');"></div>
-        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_2.jpg' %}');"></div>
-        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_3.jpg' %}');"></div>
-        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/ANM_4.jpg' %}');"></div>
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+<div class="container-fluid p-0">    <!-- Video Hero Section -->
+    <section class="relative overflow-hidden mb-12 hero-section h-screen w-screen">
+        <!-- Video Background -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
+                <source src="{% static 'landing.mp4'%}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
         
-        <div class="relative z-10 flex flex-col md:flex-row items-center p-8 md:p-12 min-h-[500px]">
-            <div class="md:w-1/2 text-white">
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Apostle Niyi Makinde</h2>
-                <div class="prose prose-lg prose-invert max-w-none">
-                    <p class="mb-4">Niyi Makinde is an Apostle and Author, a Leadership Expert, and Quotient Coach. His passion is to raise ministers and leaders.</p>
-                    <p class="mb-4">He has written many books that are fast spreading across places. His books are always flooded with rich content and great wisdom. He is highly versatile!</p>
-                    <p>Apostle Niyi is the President of Rebirth Global Church– a network of churches across the globe.</p>
-                </div>
-                <div class="mt-8">
-                    <a href="#featured-content" class="inline-block px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">Explore Library</a>
-                </div>
+        <!-- Animated Text Content -->
+        <div class="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-secondary">Apostle Niyi Digital Library</h2>
+            <div class="animated-text-container mb-8">
+                <p class="text-xl md:text-2xl lg:text-3xl text-white font-medium">
+                    <span class="typing-text text-white"></span>
+                </p>
+            </div>
+            <div class="container mx-auto px-4 py-8">
+                <a href="#featured-content" class="inline-block px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">Explore Library</a>
+                <a href="{% url 'core:about' %}" class="inline-block px-6 py-3 bg-white text-primary font-medium rounded-lg hover:bg-gray-100 transition duration-300">About NM</a>
             </div>
         </div>
     </section>
+
+<div class="container mx-auto px-4 py-8">
 
 
     <!-- Featured Content Carousel -->
@@ -64,9 +69,27 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for category in categories %}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 h-full">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-48 object-cover rounded-t-xl">
+                    {% endif %}
                     <div class="p-6">
                         <h3 class="text-xl font-semibold mb-3 text-gray-800">{{ category.name }}</h3>
                         <p class="text-gray-600 mb-4">{{ category.description|truncatewords:20 }}</p>
+                        
+                        {% if category.subcategories_list.exists %}
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-500 mb-2">Subcategories:</p>
+                            <div class="flex flex-wrap gap-2">
+                                {% for subcategory in category.subcategories_list|slice:":3" %}
+                                <a href="{% url 'core:subcategory' category.slug subcategory.slug %}" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200 transition duration-300">{{ subcategory.name }}</a>
+                                {% endfor %}
+                                {% if category.subcategories_list.count > 3 %}
+                                <span class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">+{{ category.subcategories_list.count|add:"-3" }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
                         <a href="{% url 'core:category' category.slug %}" class="inline-block px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition duration-300">Browse</a>
                     </div>
                 </div>
@@ -75,13 +98,21 @@
     </section>
 
     <!-- Recent Content -->
-    <section>
+    <section class="mb-12">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Recent Content</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for content in contents %}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 flex flex-col h-full">
+                    {% if content.featured_image %}
+                    <img src="{{ content.featured_image.url }}" alt="{{ content.title }}" class="w-full h-48 object-cover rounded-t-xl">
+                    {% endif %}
                     <div class="p-6 flex-grow">
-                        <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full mb-3">{{ content.get_content_type_display }}</span>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">{{ content.get_content_type_display }}</span>
+                            {% if content.subcategory %}
+                            <a href="{% url 'core:subcategory' content.category.slug content.subcategory.slug %}" class="text-sm text-gray-500 hover:text-primary">{{ content.subcategory.name }}</a>
+                            {% endif %}
+                        </div>
                         <h3 class="text-xl font-semibold mb-3 text-gray-800">{{ content.title }}</h3>
                         <p class="text-gray-600 mb-4">{{ content.summary|truncatewords:30 }}</p>
                         <div class="mb-4 flex flex-wrap gap-2">
@@ -100,6 +131,50 @@
                 </div>
             {% endfor %}
         </div>
+    </section>
+    
+    <!-- Quotes Section -->
+    <section class="mb-12">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Inspirational Quotes</h2>
+            <a href="{% url 'core:quotes' %}" class="text-primary hover:text-primary-dark transition duration-300">View All <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for quote in quotes %}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 overflow-hidden h-full">
+                    {% if quote.default_background %}
+                    <img src="{{ quote.default_background.image_url }}" alt="Quote Background" class="w-full h-48 object-cover">
+                    {% endif %}
+                    <div class="p-6">
+                        <blockquote class="text-lg font-semibold mb-4 text-gray-800">
+                            "{{ quote.quote_text|truncatechars:100 }}"
+                        </blockquote>
+                        <p class="text-right text-gray-600 mb-4">- Apostle Niyi Makinde</p>
+                        
+                        {% if quote.category %}
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">{{ quote.category.name }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-gray-500 text-sm">
+                                <i class="fas fa-eye mr-1"></i> {{ quote.views_count }}
+                            </span>
+                            <a href="{% url 'core:quote_share' quote.id %}" class="inline-block px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+                                <i class="fas fa-share-alt mr-1"></i> Share
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-full">
+                    <p class="text-gray-500 text-center py-8">No quotes available yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 
         <!-- Pagination -->
         {% if is_paginated %}
@@ -130,12 +205,63 @@
                     {% endif %}
                 </ul>
             </nav>
-        {% endif %}
-    </section>
+        {% endif %}           
+    
 </div>
 
 <!-- JavaScript for Carousel -->
 {% block extra_js %}
+<script>
+// Animated typing text
+const textElement = document.querySelector('.typing-text');
+        const phrases = [
+            'Sermons and Messages',
+            'Quotes',
+            'Devotionals',
+            'Leadership',
+            'Books and Collections',
+            'Blogs and Articles'
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 100;
+
+        function typeText() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                // Deleting text
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                typingSpeed = 50; // Faster when deleting
+            } else {
+                // Typing text
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+                typingSpeed = 100; // Normal typing speed
+            }
+
+            // If word is complete
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                // Pause at the end of typing
+                isDeleting = true;
+                typingSpeed = 1500; // Wait before deleting
+            } else if (isDeleting && charIndex === 0) {
+                // Move to next phrase after deleting
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typingSpeed = 500; // Pause before typing next word
+            }
+
+            setTimeout(typeText, typingSpeed);
+        }
+
+        // Start the typing animation
+        typeText();
+    
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const carousel = document.getElementById('featuredCarousel');
@@ -181,23 +307,11 @@
             updateCarousel();
         });
         
-        // Indicator clicks
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', function() {
-                currentIndex = index;
-                updateCarousel();
-            });
-        });
-        // Hero background rotation
+
+        // Auto-advance slides every 5 seconds
         const heroBackgrounds = document.querySelectorAll('.hero-section > div.absolute.bg-cover');
-        let currentBgIndex = 0;
-        
-        // Show the first background initially
-        heroBackgrounds[0].classList.add('opacity-100');
-        
-        // Rotate backgrounds every 5 seconds
-        setInterval(function() {
-            // Hide current background
+            currentIndex = (currentIndex + 1) % itemCount;
+            updateCarousel();
             heroBackgrounds[currentBgIndex].classList.remove('opacity-100');
             
             // Move to next background

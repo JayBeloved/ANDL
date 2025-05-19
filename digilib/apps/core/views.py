@@ -622,3 +622,55 @@ class AboutView(TemplateView):
             )
         context['categories'] = categories
         return context
+
+
+class NapmonView(TemplateView):
+    """View for the NAPMON (New Apostolic and Prophetic Movement of Nigeria) page"""
+    template_name = 'core/about_napmon.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get categories with subcategories for the sidebar
+        categories = Category.objects.annotate(content_count=Count('contents'))
+        for category in categories:
+            category.subcategories_list = SubCategory.objects.filter(parent_category=category).annotate(
+                content_count=Count('contents')
+            )
+        context['categories'] = categories
+        return context
+
+
+# Add this to the existing views.py file after the other view classes
+
+class ConnectGlobalView(TemplateView):
+    """View for the Connect Global page"""
+    template_name = 'core/about_connect.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get categories with subcategories for the sidebar
+        categories = Category.objects.annotate(content_count=Count('contents'))
+        for category in categories:
+            category.subcategories_list = SubCategory.objects.filter(parent_category=category).annotate(
+                content_count=Count('contents')
+            )
+        context['categories'] = categories
+        return context
+
+
+# Add this to the existing views.py file after the other view classes
+
+class RebirthGlobalView(TemplateView):
+    """View for the Rebirth Global Church page"""
+    template_name = 'core/about_rebirth.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get categories with subcategories for the sidebar
+        categories = Category.objects.annotate(content_count=Count('contents'))
+        for category in categories:
+            category.subcategories_list = SubCategory.objects.filter(parent_category=category).annotate(
+                content_count=Count('contents')
+            )
+        context['categories'] = categories
+        return context

@@ -5,7 +5,10 @@ app_name = 'core'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('about/', views.AboutView.as_view(), name='about'),
+    path('about/NM/', views.AboutView.as_view(), name='about'),
+    path('about/napmon/', views.NapmonView.as_view(), name='napmon'),
+    path('about/connect-global/', views.ConnectGlobalView.as_view(), name='connect_global'),
+    path('about/rebirth-global/', views.RebirthGlobalView.as_view(), name='rebirth_global'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('category/<slug:slug>/', views.CategoryView.as_view(), name='category'),
     path('category/<slug:category_slug>/subcategory/<slug:slug>/', views.SubCategoryView.as_view(), name='subcategory'),

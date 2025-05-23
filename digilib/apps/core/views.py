@@ -674,3 +674,37 @@ class RebirthGlobalView(TemplateView):
             )
         context['categories'] = categories
         return context
+
+
+
+class MinistryView(TemplateView):
+    """View for the Ministry page showcasing all ministries"""
+    template_name = 'core/ministry.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get ministry category
+        try:
+            ministry_category = Category.objects.get(slug='ministry')
+            
+            # Get subcategories for ministry
+            subcategories = SubCategory.objects.filter(
+                parent_category=ministry_category
+            ).annotate(content_count=Count('contents'))
+            
+            context['subcategories'] = subcategories
+            context['ministry_category'] = ministry_category
+        except Category.DoesNotExist:
+            context['subcategories'] = []
+            context['ministry_category'] = None
+        
+        # Get categories with subcategories for the sidebar
+        categories = Category.objects.annotate(content_count=Count('contents'))
+        for category in categories:
+            category.subcategories_list = SubCategory.objects.filter(parent_category=category).annotate(
+                content_count=Count('contents')
+            )
+        context['categories'] = categories
+        
+        return context

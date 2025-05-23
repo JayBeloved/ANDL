@@ -90,7 +90,12 @@
                         </div>
                         {% endif %}
                         
-                        <a href="{% url 'core:category' category.slug %}" class="inline-block px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition duration-300">Browse</a>
+                        {% if category.slug == 'ministries' %}
+                            <a href="{% url 'core:ministry' %}" class="inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition duration-300">Browse Ministries</a>
+                            <a href="{% url 'core:category' category.slug %}" class="inline-block ml-2 px-4 py-2 border border-primary text-primary rounded-lg hover:bg-gray-50 transition duration-300">View Content</a>
+                        {% else %}
+                            <a href="{% url 'core:category' category.slug %}" class="inline-block px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition duration-300">Browse</a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

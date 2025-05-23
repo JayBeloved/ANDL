@@ -3,53 +3,67 @@
 
 {% block title %}Share Quote - {{ quote.quote_text|truncatechars:50 }} - Apostle Niyi Digital Library{% endblock %}
 
+{% block meta_description %}{{ quote.quote_text|truncatechars:160 }} - Apostle Niyi Makinde{% endblock %}
+
+{% block meta %}
+<!-- Open Graph Meta Tags for better social media sharing -->
+<meta property="og:title" content="Quote by Apostle Niyi Makinde" />
+<meta property="og:description" content="{{ quote.quote_text|truncatechars:160 }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:image" content="" id="og-image-meta" />
+<meta property="og:image:width" content="1080" />
+<meta property="og:image:height" content="1080" />
+<meta property="og:image:alt" content="Quote by Apostle Niyi Makinde" />
+{% endblock %}
+
 {% block extra_css %}
 <style>
     .background-option {
-        cursor: pointer;
-        border: 3px solid transparent;
-        transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
     }
     
     .background-option.selected {
-        border-color: #4f46e5;
-        transform: scale(1.05);
+    border-color: #4f46e5;
+    transform: scale(1.05);
     }
     
     .quote-preview {
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     }
     
     .color-picker {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        width: 50px;
-        height: 50px;
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
     }
     
     .color-picker::-webkit-color-swatch {
-        border-radius: 50%;
-        border: 2px solid #ddd;
+    border-radius: 50%;
+    border: 2px solid #ddd;
     }
     
     .color-picker::-moz-color-swatch {
-        border-radius: 50%;
-        border: 2px solid #ddd;
+    border-radius: 50%;
+    border: 2px solid #ddd;
     }
     
     .custom-position-toggle {
-        display: none;
+    display: none;
     }
     
     .custom-position-toggle.active {
-        display: block;
+    display: block;
     }
 </style>
 {% endblock %}
@@ -57,156 +71,192 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Select background options
-        const backgroundOptions = document.querySelectorAll('.background-option');
-        const quotePreview = document.getElementById('quote-preview');
-        const quoteImage = document.getElementById('quote-image');
-        const downloadBtn = document.getElementById('download-btn');
-        const generateBtn = document.getElementById('generate-btn');
-        const shareButtons = document.querySelectorAll('.share-btn');
-        const fontStyleSelect = document.getElementById('font-style');
-        const fontSizeInput = document.getElementById('font-size');
-        const fontColorPicker = document.getElementById('font-color');
-        const textPositionSelect = document.getElementById('text-position');
-        const customPositionToggle = document.getElementById('custom-position-toggle');
-        const customXInput = document.getElementById('custom-x');
-        const customYInput = document.getElementById('custom-y');
-        
-        let selectedBackground = '{{ default_background }}';
-        
-        // Set initial selected background
-        backgroundOptions.forEach(option => {
-            if (option.dataset.background === selectedBackground) {
-                option.classList.add('selected');
-            }
-            
-            option.addEventListener('click', function() {
-                // Remove selected class from all options
-                backgroundOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                this.classList.add('selected');
-                
-                // Update selected background
-                selectedBackground = this.dataset.background;
-            });
-        });
-        
-        // Toggle custom position inputs
-        if (textPositionSelect) {
-            textPositionSelect.addEventListener('change', function() {
-                if (this.value === 'CUSTOM') {
-                    customPositionToggle.classList.add('active');
-                } else {
-                    customPositionToggle.classList.remove('active');
-                }
-            });
-            
-            // Initialize on page load
-            if (textPositionSelect.value === 'CUSTOM') {
-                customPositionToggle.classList.add('active');
-            }
+    // Select background options
+    const backgroundOptions = document.querySelectorAll('.background-option');
+    const quotePreview = document.getElementById('quote-preview');
+    const quoteImage = document.getElementById('quote-image');
+    const downloadBtn = document.getElementById('download-btn');
+    const generateBtn = document.getElementById('generate-btn');
+    const shareButtons = document.querySelectorAll('.share-btn');
+    const fontStyleSelect = document.getElementById('font-style');
+    const fontSizeInput = document.getElementById('font-size');
+    const fontColorPicker = document.getElementById('font-color');
+    const textPositionSelect = document.getElementById('text-position');
+    const customPositionToggle = document.getElementById('custom-position-toggle');
+    const customXInput = document.getElementById('custom-x');
+    const customYInput = document.getElementById('custom-y');
+    const ogImageMeta = document.getElementById('og-image-meta');
+    
+    let selectedBackground = '{{ default_background }}';
+    
+    // Set initial selected background
+    backgroundOptions.forEach(option => {
+    if (option.dataset.background === selectedBackground) {
+    option.classList.add('selected');
+    }
+    
+    option.addEventListener('click', function() {
+    // Remove selected class from all options
+    backgroundOptions.forEach(opt => opt.classList.remove('selected'));
+    
+    // Add selected class to clicked option
+    this.classList.add('selected');
+    
+    // Update selected background
+    selectedBackground = this.dataset.background;
+    });
+    });
+    
+    // Toggle custom position inputs
+    if (textPositionSelect) {
+    textPositionSelect.addEventListener('change', function() {
+    if (this.value === 'CUSTOM') {
+    customPositionToggle.classList.add('active');
+    } else {
+    customPositionToggle.classList.remove('active');
+    }
+    });
+    
+    // Initialize on page load
+    if (textPositionSelect.value === 'CUSTOM') {
+    customPositionToggle.classList.add('active');
+    }
+    }
+    
+    // Generate quote image
+    generateBtn.addEventListener('click', function() {
+    // Show loading state
+    quoteImage.style.opacity = '0.5';
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+    
+    // Send request to generate image
+    const formData = new FormData();
+    formData.append('background_id', selectedBackground);
+    formData.append('font_style', fontStyleSelect ? fontStyleSelect.value : '{{ default_font_style }}');
+    formData.append('font_size', fontSizeInput ? fontSizeInput.value : '{{ default_font_size }}');
+    formData.append('font_color', fontColorPicker ? fontColorPicker.value : '{{ default_font_color }}');
+    formData.append('text_position', textPositionSelect ? textPositionSelect.value : '{{ default_text_position }}');
+    
+    if (textPositionSelect && textPositionSelect.value === 'CUSTOM') {
+    formData.append('custom_x', customXInput.value);
+    formData.append('custom_y', customYInput.value);
+    }
+    
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch('{% url "core:generate_quote_image" quote.id %}', {
+    method: 'POST',
+    body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+    // Update image preview
+    quoteImage.src = data.image;
+    quoteImage.style.opacity = '1';
+    
+    // Update OG image meta tag for social sharing
+    if (ogImageMeta) {
+        ogImageMeta.content = data.image;
+    }
+    
+    // Enable download and share buttons
+    downloadBtn.disabled = false;
+    shareButtons.forEach(btn => btn.disabled = false);
+    
+    // Store image data for download and sharing
+    downloadBtn.dataset.imageData = data.image;
+    
+    // Store image data for share buttons
+    shareButtons.forEach(btn => {
+        btn.dataset.imageData = data.image;
+    });
+    } else {
+    alert('Error generating image: ' + data.error);
+    }
+    })
+    .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred while generating the image.');
+    })
+    .finally(() => {
+    // Reset button state
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Image';
+    });
+    });
+    
+    // Download image
+    downloadBtn.addEventListener('click', function() {
+    if (this.dataset.imageData) {
+    const link = document.createElement('a');
+    link.href = this.dataset.imageData;
+    link.download = 'quote-apostle-niyi.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    }
+    });
+    
+    // Share to social media
+    shareButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+    const platform = this.dataset.platform;
+    const imageData = downloadBtn.dataset.imageData;
+    const quoteText = encodeURIComponent('"{{ quote.quote_text }}" - Apostle Niyi Makinde');
+    const url = encodeURIComponent(window.location.href);
+    
+    let shareUrl = '';
+    
+    switch(platform) {
+    case 'facebook':
+        // For Facebook, we'll use the URL with OG tags
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+    case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${quoteText}&url=${url}`;
+        break;
+    case 'whatsapp':
+        // For WhatsApp on mobile, we can use the Web Share API if available
+        if (navigator.share && imageData) {
+            // Try to use Web Share API which can share images on supported mobile devices
+            fetch(imageData)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], 'quote.png', { type: 'image/png' });
+                    navigator.share({
+                        title: 'Quote by Apostle Niyi Makinde',
+                        text: `"{{ quote.quote_text }}" - Apostle Niyi Makinde`,
+                        files: [file]
+                    }).catch(err => {
+                        // Fallback to regular sharing if image sharing fails
+                        window.open(`https://api.whatsapp.com/send?text=${quoteText} ${url}`, '_blank');
+                    });
+                })
+                .catch(err => {
+                    // Fallback to regular sharing
+                    window.open(`https://api.whatsapp.com/send?text=${quoteText} ${url}`, '_blank');
+                });
+            return;
+        } else {
+            // Fallback for desktop or unsupported devices
+            shareUrl = `https://api.whatsapp.com/send?text=${quoteText} ${url}`;
         }
-        
-        // Generate quote image
-        generateBtn.addEventListener('click', function() {
-            // Show loading state
-            quoteImage.style.opacity = '0.5';
-            generateBtn.disabled = true;
-            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-            
-            // Send request to generate image
-            const formData = new FormData();
-            formData.append('background_id', selectedBackground);
-            formData.append('font_style', fontStyleSelect ? fontStyleSelect.value : '{{ default_font_style }}');
-            formData.append('font_size', fontSizeInput ? fontSizeInput.value : '{{ default_font_size }}');
-            formData.append('font_color', fontColorPicker ? fontColorPicker.value : '{{ default_font_color }}');
-            formData.append('text_position', textPositionSelect ? textPositionSelect.value : '{{ default_text_position }}');
-            
-            if (textPositionSelect && textPositionSelect.value === 'CUSTOM') {
-                formData.append('custom_x', customXInput.value);
-                formData.append('custom_y', customYInput.value);
-            }
-            
-            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-            
-            fetch('{% url "core:generate_quote_image" quote.id %}', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update image preview
-                    quoteImage.src = data.image;
-                    quoteImage.style.opacity = '1';
-                    
-                    // Enable download and share buttons
-                    downloadBtn.disabled = false;
-                    shareButtons.forEach(btn => btn.disabled = false);
-                    
-                    // Store image data for download
-                    downloadBtn.dataset.imageData = data.image;
-                } else {
-                    alert('Error generating image: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while generating the image.');
-            })
-            .finally(() => {
-                // Reset button state
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Image';
-            });
-        });
-        
-        // Download image
-        downloadBtn.addEventListener('click', function() {
-            if (this.dataset.imageData) {
-                const link = document.createElement('a');
-                link.href = this.dataset.imageData;
-                link.download = 'quote-apostle-niyi.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        });
-        
-        // Share to social media
-        shareButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const platform = this.dataset.platform;
-                const imageData = downloadBtn.dataset.imageData;
-                const quoteText = encodeURIComponent('"{{ quote.quote_text }}" - Apostle Niyi Makinde');
-                const url = encodeURIComponent(window.location.href);
-                
-                let shareUrl = '';
-                
-                switch(platform) {
-                    case 'facebook':
-                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-                        break;
-                    case 'twitter':
-                        shareUrl = `https://twitter.com/intent/tweet?text=${quoteText}&url=${url}`;
-                        break;
-                    case 'whatsapp':
-                        shareUrl = `https://api.whatsapp.com/send?text=${quoteText} ${url}`;
-                        break;
-                    case 'instagram':
-                        alert('To share on Instagram, please download the image and upload it to your Instagram account.');
-                        return;
-                }
-                
-                if (shareUrl) {
-                    window.open(shareUrl, '_blank', 'width=600,height=400');
-                }
-            });
-        });
-        
-        // Trigger generate on load
-        generateBtn.click();
+        break;
+    case 'instagram':
+        alert('To share on Instagram, please download the image and upload it to your Instagram account.');
+        return;
+    }
+    
+    if (shareUrl) {
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+    });
+    });
+    
+    // Trigger generate on load
+    generateBtn.click();
     });
 </script>
 {% endblock %}
@@ -215,143 +265,144 @@
 <div class="container mx-auto px-4 py-8">
     <!-- Quote Share Header -->
     <header class="mb-8 text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Share This Quote</h1>
-        <p class="text-xl text-gray-600">Customize and share this inspirational quote</p>
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Share This Quote</h1>
+    <p class="text-xl text-gray-600">Customize and share this inspirational quote</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Customization Options -->
-        <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Choose Background</h2>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    {% for bg in backgrounds %}
-                    <div class="background-option rounded-lg overflow-hidden" data-background="{{ bg.id }}">
-                        <img src="{{ bg.image.url }}" alt="{{ bg.name }}" class="w-full h-32 object-cover">
-                        <p class="text-center text-sm mt-1">{{ bg.name }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Text Customization</h2>
-                
-                <div class="mb-4">
-                    <label for="font-style" class="block text-sm font-medium text-gray-700 mb-1">Font Style</label>
-                    <select id="font-style" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
-                        {% for value, name in font_styles %}
-                        <option value="{{ value }}" {% if value == default_font_style %}selected{% endif %}>{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="font-size" class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
-                    <input type="range" id="font-size" min="20" max="60" value="{{ default_font_size }}" class="w-full">
-                    <div class="flex justify-between text-xs text-gray-500">
-                        <span>Small</span>
-                        <span>Medium</span>
-                        <span>Large</span>
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="font-color" class="block text-sm font-medium text-gray-700 mb-1">Font Color</label>
-                    <div class="flex items-center">
-                        <input type="color" id="font-color" value="{{ default_font_color }}" class="color-picker mr-3">
-                        <span class="text-sm" id="color-hex">{{ default_font_color }}</span>
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="text-position" class="block text-sm font-medium text-gray-700 mb-1">Text Position</label>
-                    <select id="text-position" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
-                        {% for value, name in text_positions %}
-                        <option value="{{ value }}" {% if value == default_text_position %}selected{% endif %}>{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div id="custom-position-toggle" class="custom-position-toggle mb-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="custom-x" class="block text-sm font-medium text-gray-700 mb-1">X Position (px)</label>
-                            <input type="number" id="custom-x" value="{{ custom_x_position|default:540 }}" min="0" max="1080" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
-                        </div>
-                        <div>
-                            <label for="custom-y" class="block text-sm font-medium text-gray-700 mb-1">Y Position (px)</label>
-                            <input type="number" id="custom-y" value="{{ custom_y_position|default:540 }}" min="0" max="1080" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
-                        </div>
-                    </div>
-                </div>                
-                <div class="mt-6">
-                    <button id="generate-btn" class="w-full px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">
-                        <i class="fas fa-magic"></i> Generate Image
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Quote Preview -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Preview</h2>
-                
-                <div id="quote-preview" class="quote-preview mb-6">
-                    <img id="quote-image" src="" alt="Quote Preview" class="w-full h-auto rounded-lg">
-                </div>
-                
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <button id="download-btn" disabled class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                    
-                    <button data-platform="facebook" disabled class="share-btn px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-300">
-                        <i class="fab fa-facebook-f"></i> Facebook
-                    </button>
-                    
-                    <button data-platform="twitter" disabled class="share-btn px-4 py-2 bg-blue-400 text-white font-medium rounded-lg hover:bg-blue-500 transition duration-300">
-                        <i class="fab fa-twitter"></i> Twitter
-                    </button>
-                    
-                    <button data-platform="whatsapp" disabled class="share-btn px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition duration-300">
-                        <i class="fab fa-whatsapp"></i> WhatsApp
-                    </button>
-                    
-                    <button data-platform="instagram" disabled class="share-btn px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition duration-300">
-                        <i class="fab fa-instagram"></i> Instagram
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Original Quote -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6">
-                <blockquote class="text-xl font-semibold mb-4 text-black-800">
-                    "{{ quote.quote_text }}"
-                </blockquote>
-                <p class="text-right text-gray-600">- Apostle Niyi Makinde</p>
-                
-                <div class="mt-4 pt-4 border-t border-gray-100">
-                    <a href="{% url 'core:quotes' %}" class="text-primary hover:text-primary-dark transition duration-300">
-                        <i class="fas fa-arrow-left mr-1"></i> Back to Quotes
-                    </a>
-                </div>
-            </div>
-        </div>
+    <!-- Customization Options -->
+    <div class="lg:col-span-1">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Choose Background</h2>
+    
+    <div class="grid grid-cols-2 gap-4">
+    {% for bg in backgrounds %}
+    <div class="background-option rounded-lg overflow-hidden" data-background="{{ bg.id }}">
+    <img src="{{ bg.image.url }}" alt="{{ bg.name }}" class="w-full h-32 object-cover">
+    <p class="text-center text-sm mt-1">{{ bg.name }}</p>
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Text Customization</h2>
+    
+    <div class="mb-4">
+    <label for="font-style" class="block text-sm font-medium text-gray-700 mb-1">Font Style</label>
+    <select id="font-style" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+    {% for value, name in font_styles %}
+    <option value="{{ value }}" {% if value == default_font_style %}selected{% endif %}>{{ name }}</option>
+    {% endfor %}
+    </select>
+    </div>
+    
+    <div class="mb-4">
+    <label for="font-size" class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+    <input type="range" id="font-size" min="20" max="60" value="{{ default_font_size }}" class="w-full">
+    <div class="flex justify-between text-xs text-gray-500">
+    <span>Small</span>
+    <span>Medium</span>
+    <span>Large</span>
+    </div>
+    </div>
+    
+    <div class="mb-4">
+    <label for="font-color" class="block text-sm font-medium text-gray-700 mb-1">Font Color</label>
+    <div class="flex items-center">
+    <input type="color" id="font-color" value="{{ default_font_color }}" class="color-picker mr-3">
+    <span class="text-sm" id="color-hex">{{ default_font_color }}</span>
+    </div>
+    </div>
+    
+    <div class="mb-4">
+    <label for="text-position" class="block text-sm font-medium text-gray-700 mb-1">Text Position</label>
+    <select id="text-position" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+    {% for value, name in text_positions %}
+    <option value="{{ value }}" {% if value == default_text_position %}selected{% endif %}>{{ name }}</option>
+    {% endfor %}
+    </select>
+    </div>
+    
+    <div id="custom-position-toggle" class="custom-position-toggle mb-4">
+    <div class="grid grid-cols-2 gap-4">
+    <div>
+    <label for="custom-x" class="block text-sm font-medium text-gray-700 mb-1">X Position (px)</label>
+    <input type="number" id="custom-x" value="{{ custom_x_position|default:540 }}" min="0" max="1080" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+    </div>
+    <div>
+    <label for="custom-y" class="block text-sm font-medium text-gray-700 mb-1">Y Position (px)</label>
+    <input type="number" id="custom-y" value="{{ custom_y_position|default:540 }}" min="0" max="1080" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+    </div>
+    </div>
+    </div>    
+    <div class="mt-6">
+    <button id="generate-btn" class="w-full px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+    <i class="fas fa-magic"></i> Generate Image
+    </button>
+    </div>
+    </div>
+    </div>
+    
+    <!-- Quote Preview -->
+    <div class="lg:col-span-2">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Preview</h2>
+    
+    <div id="quote-preview" class="quote-preview mb-6">
+    <img id="quote-image" src="" alt="Quote Preview" class="w-full h-auto rounded-lg">
+    </div>
+    
+    <div class="flex flex-wrap gap-3 justify-center">
+    <button id="download-btn" disabled class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300">
+    <i class="fas fa-download"></i> Download
+    </button>
+    
+    <button data-platform="facebook" disabled class="share-btn px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-300">
+    <i class="fab fa-facebook-f"></i> Facebook
+    </button>
+    
+    <button data-platform="twitter" disabled class="share-btn px-4 py-2 bg-blue-400 text-white font-medium rounded-lg hover:bg-blue-500 transition duration-300">
+    <i class="fab fa-twitter"></i> Twitter
+    </button>
+    
+    <button data-platform="whatsapp" disabled class="share-btn px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition duration-300">
+    <i class="fab fa-whatsapp"></i> WhatsApp
+    </button>
+    
+    <button data-platform="instagram" disabled class="share-btn px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition duration-300">
+    <i class="fab fa-instagram"></i> Instagram
+    </button>
+    </div>
+    </div>
+    
+    <!-- Original Quote -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6">
+    <blockquote class="text-xl font-semibold mb-4 text-black-800">
+    "{{ quote.quote_text }}"
+    </blockquote>
+    <p class="text-right text-gray-600">- Apostle Niyi Makinde</p>
+    
+    <div class="mt-4 pt-4 border-t border-gray-100">
+    <a href="{% url 'core:quotes' %}" class="text-primary hover:text-primary-dark transition duration-300">
+    <i class="fas fa-arrow-left mr-1"></i> Back to Quotes
+    </a>
+    </div>
+    </div>
+    </div>
     </div>
 </div>
 <script>
     // Update color hex display when color picker changes
     document.addEventListener('DOMContentLoaded', function() {
-        const colorPicker = document.getElementById('font-color');
-        const colorHex = document.getElementById('color-hex');
-        
-        if (colorPicker && colorHex) {
-            colorPicker.addEventListener('input', function() {
-                colorHex.textContent = this.value;
-            });
-        }
+    const colorPicker = document.getElementById('font-color');
+    const colorHex = document.getElementById('color-hex');
+    
+    if (colorPicker && colorHex) {
+    colorPicker.addEventListener('input', function() {
+    colorHex.textContent = this.value;
     });
-</script>{% endblock content %}
+    }
+    });
+</script>
+{% endblock content %}

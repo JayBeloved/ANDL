@@ -10,6 +10,7 @@ urlpatterns = [
     path('about/connect-global/', views.ConnectGlobalView.as_view(), name='connect_global'),
     path('about/rebirth-global/', views.RebirthGlobalView.as_view(), name='rebirth_global'),
     path('search/', views.SearchView.as_view(), name='search'),
+    path('ministry/', views.MinistryView.as_view(), name='ministry'),
     path('category/<slug:slug>/', views.CategoryView.as_view(), name='category'),
     path('category/<slug:category_slug>/subcategory/<slug:slug>/', views.SubCategoryView.as_view(), name='subcategory'),
     path('tag/<slug:slug>/', views.TagView.as_view(), name='tag'),

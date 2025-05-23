@@ -63,6 +63,7 @@
                     </div> -->
                     <a href="{% url 'core:quotes' %}" class="hover:text-accent transition">Quotes</a>
                     <a href="{% url 'core:books' %}" class="hover:text-accent transition">Books</a>
+                    <a href="{% url 'core:ministry' %}" class="hover:text-accent transition">Ministries</a>
                     <a href="{% url 'core:search' %}" class="hover:text-accent transition">Search</a>
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboard:index' %}" class="hover:text-accent transition">My Dashboard</a>
@@ -76,19 +77,9 @@
             <!-- Mobile Navigation -->
             <nav id="mobile-menu" class="md:hidden mt-3 pb-3 hidden">
                 <a href="{% url 'core:home' %}" class="block py-2 hover:text-accent transition">Home</a>
-                <div class="relative py-2">
-                    <button id="mobile-categories-button" class="flex items-center hover:text-accent transition w-full text-left">
-                        Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="mobile-categories-menu" class="mt-2 pl-4 hidden">
-                        {% for category in categories %}
-                        <a href="{% url 'core:category' category.slug %}" class="block py-2 hover:text-accent transition">
-                            {{ category.name }}
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
                 <a href="{% url 'core:quotes' %}" class="block py-2 hover:text-accent transition">Quotes</a>
+                <a href="{% url 'core:books' %}" class="block py-2 hover:text-accent transition">Books</a>
+                <a href="{% url 'core:ministry' %}" class="block py-2 hover:text-accent transition">Ministries</a>
                 <a href="{% url 'core:search' %}" class="block py-2 hover:text-accent transition">Search</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'dashboard:index' %}" class="block py-2 hover:text-accent transition">Dashboard</a>

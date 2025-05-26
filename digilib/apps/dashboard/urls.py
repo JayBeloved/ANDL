@@ -69,4 +69,6 @@ urlpatterns = [
     path('settings/database/export/', views.export_database, name='export_database'),
     path('settings/database/import/', views.import_database, name='import_database'),
     path('settings/database/restore/<str:filename>/', views.restore_database_backup, name='restore_database_backup'),
+    path('export-template/', views.ExportTemplateView.as_view(), name='export_template'),
+    path('import-template/', views.ImportTemplateView.as_view(), name='import_template'),
 ]

@@ -269,6 +269,8 @@ class Quote(models.Model):
         ('CENTER', 'Center'),
         ('TOP', 'Top'),
         ('BOTTOM', 'Bottom'),
+        ('LEFT', 'Left'),       # Added left option
+        ('RIGHT', 'Right'),     # Added right option
         ('CUSTOM', 'Custom'),
     ]
     
@@ -276,7 +278,7 @@ class Quote(models.Model):
         ('ARIAL', 'Arial'),
         ('TIMES', 'Times New Roman'),
         ('DAILYQUOTES', 'Daily Quotes'),
-        ('LATO-BOLD', 'Lato Italic'),
+        ('LATO-BOLD', 'Lato Bold'),
         ('LATO-ITALIC', 'Lato Italic'),
         ('LATO-REGULAR', 'Lato Regular'),
         ('POPPINS-ITALIC', 'Poppins Italic'),

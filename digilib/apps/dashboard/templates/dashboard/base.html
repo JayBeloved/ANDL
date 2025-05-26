@@ -184,6 +184,16 @@
                     <i class="fas fa-cog mr-3"></i>
                     <span>Settings</span>
                 </a>
+
+                <a href="{% url 'dashboard:export_template' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Export Template</span>
+                </a>
+
+                <a href="{% url 'dashboard:import_template' %}" class="nav-link flex items-center text-gray-700 {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Import Template</span>
+                </a>
             </nav>
             
             <hr class="my-6 border-gray-200">

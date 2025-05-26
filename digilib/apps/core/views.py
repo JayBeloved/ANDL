@@ -534,9 +534,11 @@ def generate_quote_image(request, quote_id):
         current_line = words[0] if words else ""
         for word in words[1:]:
             test_line = current_line + ' ' + word
-            # Use font to get actual text width
             text_width = draw.textlength(test_line, font=font)
-            if text_width < width - 200:  # 50px margin on each side
+            max_width = width - 100  # Reduced margin for side positions
+            if text_position in ['LEFT', 'RIGHT']:
+                max_width = width - 150  # More space for side positions
+            if text_width < max_width:
                 current_line = test_line
             else:
                 lines.append(current_line)
@@ -554,21 +556,29 @@ def generate_quote_image(request, quote_id):
             text_align = "center"
         elif text_position == 'TOP':
             x_start = width // 2
-            y_start = 50  # 50px from top
+            y_start = 50
             text_align = "center"
         elif text_position == 'BOTTOM':
             x_start = width // 2
-            y_start = height - total_text_height - 150  # 150px from bottom to leave room for author
+            y_start = height - total_text_height - 150
             text_align = "center"
+        elif text_position == 'LEFT':  # New left alignment
+            x_start = 50  # 50px from left
+            y_start = (height - total_text_height) // 2
+            text_align = "left"
+        elif text_position == 'RIGHT':  # New right alignment
+            x_start = width - 50  # 50px from right
+            y_start = (height - total_text_height) // 2
+            text_align = "right"
         elif text_position == 'CUSTOM' and custom_x and custom_y:
             x_start = int(custom_x)
             y_start = int(custom_y)
             text_align = "left"
         else:
-            # Default to center if custom position is invalid
             x_start = width // 2
             y_start = (height - total_text_height) // 2
             text_align = "center"
+
         
         # Draw the quote text
         y_position = y_start
@@ -639,8 +649,6 @@ class NapmonView(TemplateView):
         context['categories'] = categories
         return context
 
-
-# Add this to the existing views.py file after the other view classes
 
 class ConnectGlobalView(TemplateView):
     """View for the Connect Global page"""

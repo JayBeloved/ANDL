@@ -1,3 +1,8 @@
+import os
+import csv
+import io
+from django.shortcuts import render
+from django.views.generic import FormView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -9,10 +14,10 @@ from django.db.models import Count, Sum, Q
 from django.utils import timezone
 from datetime import timedelta
 from django.apps import apps
-import os
 from django.core.files.storage import FileSystemStorage# digilib/apps/dashboard/views.py
+from django import forms
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from digilib.apps.core.models import Category, SubCategory
 from django.shortcuts import get_object_or_404
 
@@ -21,6 +26,36 @@ User = get_user_model()
 # Helper function to check if user is staff
 def is_staff(user):
     return user.is_staff
+
+
+# Form for selecting the model to export
+class ExportTemplateForm(forms.Form):
+    MODEL_CHOICES = [
+        ('Category', 'Category'),
+        ('SubCategory', 'Sub Category'),
+        ('Tag', 'Tag'),
+        ('Content', 'Content'),
+        ('Quote', 'Quote'),
+        ('QuoteCategory', 'Quote Category'),
+        ('SiteSettings', 'Site Settings'),
+        ('SocialLinks', 'Social Links'),
+    ]
+    model = forms.ChoiceField(choices=MODEL_CHOICES, label='Select Model to Export')
+
+# Form for selecting the model to import
+class ImportTemplateForm(forms.Form):
+    MODEL_CHOICES = [
+        ('Category', 'Category'),
+        ('SubCategory', 'Sub Category'),
+        ('Tag', 'Tag'),
+        ('Content', 'Content'),
+        ('Quote', 'Quote'),
+        ('QuoteCategory', 'Quote Category'),
+        ('SiteSettings', 'Site Settings'),
+        ('SocialLinks', 'Social Links'),
+    ]
+    model = forms.ChoiceField(choices=MODEL_CHOICES, label='Select Model to Import')
+    csv_file = forms.FileField(label='CSV File', help_text='Select the CSV file to import')
 
 # Dashboard Home
 class DashboardHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -1283,3 +1318,51 @@ def get_subcategories(request, category_id):
     
     subcategories = Subcategory.objects.filter(category_id=category_id, is_active=True).values('id', 'name')
     return JsonResponse(list(subcategories), safe=False)
+
+
+class ExportTemplateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = 'dashboard/export_template.html'
+    form_class = ExportTemplateForm
+    success_url = reverse_lazy('dashboard:export_template')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        model_name = form.cleaned_data['model']
+        model = apps.get_model('core', model_name)
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{model_name}_template.csv"'
+
+        writer = csv.writer(response)
+        headers = [field.name for field in model._meta.fields]
+        writer.writerow(headers)
+
+        return response
+
+class ImportTemplateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = 'dashboard/import_template.html'
+    form_class = ImportTemplateForm
+    success_url = reverse_lazy('dashboard:import_template')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        model_name = form.cleaned_data['model']
+        csv_file = form.cleaned_data['csv_file']
+        model = apps.get_model('core', model_name)
+
+        decoded_file = csv_file.read().decode('utf-8')
+        io_string = io.StringIO(decoded_file)
+        reader = csv.DictReader(io_string)
+
+        for row in reader:
+            # Create or update the model instance
+            instance, created = model.objects.update_or_create(
+                id=row.get('id'),  # Assuming 'id' is the primary key
+                defaults=row
+            )
+
+        messages.success(self.request, f'{model_name} data imported successfully!')
+        return super().form_valid(form)

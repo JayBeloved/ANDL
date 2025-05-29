@@ -19,6 +19,7 @@ from django import forms
 from django.conf import settings
 from django.http import FileResponse
 import sqlite3
+import datetime
 
 from django.http import JsonResponse, HttpResponse
 from digilib.apps.core.models import Category, SubCategory
@@ -237,6 +238,10 @@ class ContentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        Category = apps.get_model('core', 'Category')
+        Tag = apps.get_model('core', 'Tag')
+        context['categories'] = Category.objects.all()
+        context['tags'] = Tag.objects.all()
         SiteSettings = apps.get_model('core', 'SiteSettings')
         
         # Get or create site settings

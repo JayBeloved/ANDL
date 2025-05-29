@@ -29,7 +29,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent_category', 'description', 'image_preview')
     list_filter = ('parent_category',)
     search_fields = ('name', 'description', 'parent_category__name')
-    prepopulated_fields = {'slug': ('name',)}
+    # prepopulated_fields = {'slug': ('name',)}
     
     def image_preview(self, obj):
         if obj.image:
@@ -58,7 +58,7 @@ class ContentAdmin(admin.ModelAdmin):
             'fields': ('title', 'author', 'summary', 'content')
         }),
         ('Media', {
-            'fields': ('featured_image', 'image_preview_large')
+            'fields': (['featured_image'])
         }),
         ('Categorization', {
             'fields': ('category', 'subcategory', 'tags', 'content_type')

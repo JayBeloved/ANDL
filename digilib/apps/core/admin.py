@@ -209,7 +209,7 @@ class BookAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Metadata', {
-            'fields': ('created_at', 'updated_at', 'slug'),
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )

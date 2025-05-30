@@ -1,3 +1,4 @@
+<!-- File: c:\Archive\ANDL\digilib\templates\core\books.html -->
 {% extends "base.html" %}
 {% load static %}
 
@@ -130,6 +131,75 @@
         </ul>
     </nav>
     {% endif %}
+
+    <!-- Additional Books Section -->
+    <section class="mb-10">
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">More Books by Apostle Niyi Makinde</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <!-- Book 1 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_1.jpg' %}" alt="Book Cover 1" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 2 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_2.jpg' %}" alt="Book Cover 2" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 3 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_3.jpg' %}" alt="Book Cover 3" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 4 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_4.png' %}" alt="Book Cover 4" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 5 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_5.jpg' %}" alt="Book Cover 5" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 6 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_6.jpg' %}" alt="Book Cover 6" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 7 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_7.png' %}" alt="Book Cover 7" class="object-cover w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Book 8 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="h-64 overflow-hidden">
+                    <img src="{% static 'images/bkcover_8.jpg' %}" alt="Book Cover 8" class="object-cover w-full h-full">
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-8">
+            <a href="https://www.apostleniyi.com/" target="_blank" class="inline-block px-8 py-4 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition duration-300">
+                <i class="fas fa-book mr-2"></i> Get My Books
+            </a>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -141,16 +211,16 @@
         categoryFilter.addEventListener('change', function() {
             const categorySlug = this.value;
             window.location.href = categorySlug ? 
-                `?category=${categorySlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}` : 
-                `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}`;
+            `?category=${categorySlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}` : 
+            `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}`;
         });
         
         // Handle tag filter change
         tagFilter.addEventListener('change', function() {
             const tagSlug = this.value;
             window.location.href = tagSlug ? 
-                `?tag=${tagSlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}` : 
-                `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}`;
+            `?tag=${tagSlug}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}` : 
+            `?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}`;
         });
     });
 </script>

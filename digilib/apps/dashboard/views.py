@@ -22,7 +22,7 @@ import sqlite3
 import datetime
 
 from django.http import JsonResponse, HttpResponse
-from digilib.apps.core.models import Category, SubCategory
+from digilib.apps.core.models import Category, SubCategory, QuoteCategory, BackgroundImage
 from django.shortcuts import get_object_or_404
 
 User = get_user_model()
@@ -1348,6 +1348,9 @@ class ExportTemplateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
         return response
 
+
+
+
 class ImportTemplateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = 'dashboard/import_template.html'
     form_class = ImportTemplateForm
@@ -1366,6 +1369,39 @@ class ImportTemplateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         reader = csv.DictReader(io_string)
 
         for row in reader:
+            # Convert user ID to User instance
+            if 'author' in row:
+                try:
+                    user_id = int(row['author'])
+                    row['author'] = User.objects.get(id=user_id)
+                except (ValueError, User.DoesNotExist):
+                    messages.error(self.request, f"Invalid user ID: {row['author']}")
+                    continue
+
+            # Convert quote category ID to QuoteCategory instance
+            if 'category' in row:
+                try:
+                    category_id = int(row['category'])
+                    row['category'] = QuoteCategory.objects.get(id=category_id)
+                except (ValueError, QuoteCategory.DoesNotExist):
+                    messages.error(self.request, f"Invalid quote category ID: {row['category']}")
+                    continue
+
+            # Convert default background ID to BackgroundImage instance
+            if 'default_background' in row:
+                try:
+                    background_id = int(row['default_background'])
+                    row['default_background'] = BackgroundImage.objects.get(id=background_id)
+                except (ValueError, BackgroundImage.DoesNotExist):
+                    messages.error(self.request, f"Invalid default background ID: {row['default_background']}")
+                    continue
+
+            # Handle null values for custom_x_position and custom_y_position
+            if 'custom_x_position' in row and row['custom_x_position'] == '':
+                row['custom_x_position'] = None
+            if 'custom_y_position' in row and row['custom_y_position'] == '':
+                row['custom_y_position'] = None
+
             # Create or update the model instance
             instance, created = model.objects.update_or_create(
                 id=row.get('id'),  # Assuming 'id' is the primary key

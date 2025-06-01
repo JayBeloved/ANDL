@@ -89,13 +89,14 @@
                         <p class="text-gray-600 mb-4">By {{ book.author_name }}</p>
                         
                         <div class="flex flex-wrap gap-3">
-                            <a href="{{ book.pdf_file.url }}" download class="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300">
+                            <a href="{{ book.pdf_file.url }}" download class="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition duration-300" id="download-btn" data-slug="{{ book.slug }}">
                                 <i class="fas fa-download"></i> Download PDF
                             </a>
                             
-                            <button id="download-btn" data-slug="{{ book.slug }}" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300">
+                            <!-- Commented out Read Online button -->
+                            <!-- <button id="read-online-btn" data-slug="{{ book.slug }}" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300">
                                 <i class="fas fa-book-reader"></i> Read Online
-                            </button>
+                            </button> -->
                             
                             <div class="mt-4 w-full">
                                 <p class="text-sm text-gray-500">
@@ -148,7 +149,8 @@
         const downloadCount = document.getElementById('download-count');
         
         if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
+            downloadBtn.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default download action
                 const bookSlug = this.dataset.slug;
                 
                 // Send AJAX request to increment download count

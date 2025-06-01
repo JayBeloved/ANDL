@@ -185,7 +185,7 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('status', 'featured', 'category', 'subcategory', 'tags')
     search_fields = ('title', 'author_name', 'synopsis', 'publisher', 'isbn')
     filter_horizontal = ('tags',)
-    readonly_fields = ('views_count', 'downloads_count', 'created_at', 'updated_at', 'cover_preview_large', 'slug')
+    readonly_fields = ('views_count', 'created_at', 'updated_at', 'cover_preview_large', 'slug')
     actions = ['make_published', 'make_draft', 'toggle_featured']
     
     fieldsets = (
@@ -229,7 +229,7 @@ class BookAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj:  # editing an existing object
             return self.readonly_fields
-        return ('views_count', 'downloads_count', 'created_at', 'updated_at', 'cover_preview_large')
+        return ('views_count', 'created_at', 'updated_at', 'cover_preview_large')
     
     def make_published(self, request, queryset):
         queryset.update(status='PUBLISHED')

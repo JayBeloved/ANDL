@@ -143,6 +143,11 @@
     </div>
 </div>
 
+<!-- Hidden form for mobile download -->
+<form id="download-form" action="/book/{{ book.slug }}/download/" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const downloadBtn = document.getElementById('download-btn');
@@ -153,30 +158,38 @@
                 event.preventDefault(); // Prevent the default download action
                 const bookSlug = this.dataset.slug;
                 
-                // Send AJAX request to increment download count
-                fetch(`/book/${bookSlug}/download/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update download count
-                        downloadCount.textContent = data.download_count;
-                        
-                        // Redirect to PDF file
-                        window.open('{{ book.pdf_file.url }}', '_blank');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                // Submit the hidden form to increment download count
+                document.getElementById('download-form').submit();
             });
         }
+        
+        // Handle form submission to update download count and trigger download
+        document.getElementById('download-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Send AJAX request to increment download count
+            fetch(`/book/${bookSlug}/download/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update download count
+                    downloadCount.textContent = data.download_count;
+                    
+                    // Redirect to PDF file
+                    window.location.href = '{{ book.pdf_file.url }}';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
     });
 </script>
 {% endblock content %}

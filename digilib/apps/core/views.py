@@ -359,7 +359,6 @@ class BookDetailView(DetailView):
 
 
 @require_POST
-@login_required
 def download_book(request, slug):
     book = get_object_or_404(Book, slug=slug, status='PUBLISHED')
     book.downloads_count += 1
